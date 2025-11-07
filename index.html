@@ -1,481 +1,456 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ru">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
-<title>Olly’s Dream</title>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Olly's Dream</title>
 <style>
   :root{
-    --bg:#fde7ef;
+    --bg:#fde7ee;
     --card:#fff;
-    --ink:#241b1e;
-    --muted:#6d6166;
-    --accent:#ff6fa3;
-    --accent-2:#ffc4d9;
-    --chip:#ffe7f0;
-    --shadow: 0 10px 30px rgba(0,0,0,.08);
+    --ink:#2b1e25;
+    --ink-dim:#6b5a61;
+    --accent:#ff6ea2;
+    --accent-2:#ff9bc0;
+    --pill:#ffd6e6;
+    --ok:#2fb37c;
+    --warn:#e86e3a;
+    --shadow:0 8px 20px rgba(0,0,0,.08);
     --radius:18px;
   }
-  html,body{margin:0;height:100%;background:var(--bg);color:var(--ink);font:16px/1.45 system-ui,-apple-system,Segoe UI,Roboto,Inter,Arial;}
-  .wrap{max-width:980px;margin:0 auto;padding:22px 16px 96px;}
-  h1{font-size:40px;margin:8px 0 12px;font-weight:800;letter-spacing:.2px}
-  .sub{opacity:.8;background:rgba(255,255,255,.6);padding:14px 18px;border-radius:14px;backdrop-filter:saturate(130%) blur(2px);}
-  .row{display:flex;gap:12px;flex-wrap:wrap;align-items:center;margin:18px 0 10px}
-  .btn{appearance:none;border:0;background:var(--card);padding:14px 18px;border-radius:999px;box-shadow:var(--shadow);font-weight:700}
-  .btn:active{transform:translateY(1px)}
-  .btn--ghost{background:var(--chip);}
-  .btn--accent{background:var(--accent);color:#fff}
-  .tabs{display:flex;gap:16px;margin:18px 0}
-  .tab{padding:16px 26px;border-radius:999px;background:var(--card);box-shadow:var(--shadow);font-weight:800;opacity:.7}
-  .tab.active{background:var(--accent-2);opacity:1}
-  .search{width:100%;padding:16px 18px;border-radius:14px;border:0;background:var(--card);box-shadow:var(--shadow);}
-  .stats{display:flex;gap:16px;margin:14px 0 6px}
-  .pill{padding:10px 16px;border-radius:999px;background:var(--card);box-shadow:var(--shadow);font-weight:800}
-  .grid{display:grid;gap:16px;margin-top:10px}
-  @media(min-width:740px){ .grid{grid-template-columns:repeat(2,1fr);} }
-  .card{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;position:relative}
-  .card__body{padding:16px 16px 14px}
-  .thumb{width:112px;height:112px;object-fit:cover;border-radius:12px;background:#f3f3f3;box-shadow:inset 0 0 0 1px rgba(0,0,0,.06)}
-  .row-split{display:grid;grid-template-columns:112px 1fr;gap:14px;align-items:center}
-  .name{font-weight:900;font-size:22px;margin:0 0 8px;cursor:pointer;text-decoration:underline 2px rgba(0,0,0,.08)}
-  .muted{color:var(--muted)}
-  .chips{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0 6px}
-  .chip{background:var(--chip);border-radius:999px;padding:6px 10px;font-weight:700}
-  .row-actions{display:flex;gap:10px;justify-content:space-between;align-items:center;margin-top:8px}
-  .link{font-weight:800;color:#222;opacity:.7;text-decoration:underline;cursor:pointer}
+  html,body{height:100%}
+  body{
+    margin:0;
+    font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+    background:var(--bg);
+    color:var(--ink);
+  }
+  .wrap{max-width:980px;margin:0 auto;padding:28px 16px 120px}
+  h1{font-size:40px;margin:8px 0 12px}
+  .sub{color:var(--ink-dim);opacity:.9;margin-bottom:20px}
+  .row{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+  .btn{
+    background:#fff;border:0;padding:12px 16px;border-radius:999px;
+    box-shadow:var(--shadow);cursor:pointer;font-weight:700
+  }
+  .btn.primary{background:var(--accent);color:#fff}
+  .btn.ghost{background:var(--pill)}
+  .tabs{display:flex;gap:16px;margin:18px 0 10px}
+  .tab{padding:14px 22px;background:#fff;border-radius:999px;cursor:pointer;font-weight:800;box-shadow:var(--shadow);}
+  .tab.active{background:var(--accent);color:#fff}
+  .search{width:100%;padding:14px 18px;border-radius:14px;border:0;box-shadow:var(--shadow);}
+  .stats{display:flex;gap:16px;margin:14px 0 8px}
+  .chip{display:inline-flex;align-items:center;gap:8px;background:#fff;padding:10px 14px;border-radius:999px;box-shadow:var(--shadow);font-weight:700}
+  .list{display:grid;grid-template-columns:1fr;gap:14px;margin-top:8px}
+  @media(min-width:720px){.list{grid-template-columns:1fr 1fr}}
+  .card{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);padding:14px;display:flex;gap:14px;align-items:stretch}
+  .thumb{width:110px;height:110px;border-radius:14px;overflow:hidden;background:#f3f0f2;flex:0 0 auto;display:flex;align-items:center;justify-content:center;cursor:pointer}
+  .thumb img{max-width:100%;max-height:100%;object-fit:cover;display:block}
+  .grow{flex:1 1 auto}
+  .name{font-size:22px;font-weight:900;margin:2px 0 6px;cursor:pointer;text-decoration:underline;text-decoration-color:rgba(0,0,0,.15)}
+  .muted{color:var(--ink-dim)}
+  .tags{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+  .tag{background:var(--pill);padding:8px 12px;border-radius:999px;font-weight:700}
+  .links{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+  .link-chip{background:#eef4ff;color:#243ea1;padding:8px 12px;border-radius:999px;cursor:pointer;font-weight:700}
+  .row-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:10px}
+  .a{color:#274EA0;cursor:pointer;font-weight:700}
   /* modal */
-  dialog{border:0;border-radius:20px;box-shadow:var(--shadow);width:min(720px,92vw);}
-  dialog::backdrop{background:rgba(0,0,0,.35)}
-  .form{display:grid;gap:12px}
-  .field{display:grid;gap:6px}
-  label{font-weight:800}
-  input[type="text"], input[type="number"], textarea, select{width:100%;padding:14px;border-radius:12px;border:0;background:#f9f9fb;box-shadow:inset 0 0 0 1px rgba(0,0,0,.07)}
+  .modal-back{position:fixed;inset:0;background:rgba(0,0,0,.4);display:none;align-items:center;justify-content:center;padding:16px;z-index:20}
+  .modal{background:#fff;max-width:760px;width:min(760px,100%);border-radius:20px;box-shadow:var(--shadow);padding:16px}
+  .modal .title{font-size:22px;font-weight:900;margin:4px 0 12px}
+  .grid{display:grid;grid-template-columns:1fr;gap:12px}
+  @media(min-width:680px){.grid{grid-template-columns:1fr 1fr}}
+  label{font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-dim);font-weight:800}
+  input,select,textarea{width:100%;padding:12px 12px;border:1px solid #e8e0e4;border-radius:12px;background:#fff}
   textarea{min-height:96px;resize:vertical}
-  .filebox{display:flex;align-items:center;gap:12px}
-  .preview{width:96px;height:96px;border-radius:12px;object-fit:cover;background:#f1f1f3;box-shadow:inset 0 0 0 1px rgba(0,0,0,.06)}
-  .bar{display:flex;justify-content:space-between;gap:10px;align-items:center}
-  .danger{background:#ffdde6;color:#8a123a}
-  .tiny{font-size:12px}
+  .modal .actions{display:flex;gap:12px;justify-content:flex-end;margin-top:12px}
+  /* lightbox */
+  .lightbox{position:fixed;inset:0;background:rgba(0,0,0,.9);display:none;align-items:center;justify-content:center;z-index:30}
+  .lightbox img{max-width:92vw;max-height:92vh;border-radius:16px}
+  /* pills on counters */
+  .pill{background:#fff;border-radius:999px;padding:10px 14px;box-shadow:var(--shadow);font-weight:800}
 </style>
 </head>
 <body>
   <div class="wrap">
-    <h1>Olly’s Dream</h1>
+    <h1>Olly's Dream</h1>
     <div class="sub">Ткани • Выкройки • Готовые изделия — офлайн, с сохранением</div>
-
     <div class="row">
-      <button class="btn btn--ghost" id="btnExport">Экспорт JSON</button>
-      <label class="btn btn--ghost" for="importFile">Импорт JSON</label>
-      <input id="importFile" type="file" accept="application/json" style="display:none">
+      <button class="btn" id="btnExport">Экспорт JSON</button>
+      <input type="file" id="importInput" accept="application/json" hidden>
+      <button class="btn" id="btnImport">Импорт JSON</button>
+      <span style="flex:1 1 auto"></span>
+      <button class="btn primary" id="btnAdd">+ Добавить <span class="tabName">ткань</span></button>
     </div>
 
-    <div class="tabs" id="tabs">
+    <div class="tabs">
       <div class="tab active" data-tab="fabrics">Ткани</div>
       <div class="tab" data-tab="patterns">Выкройки</div>
-      <div class="tab" data-tab="products">Готовые изделия</div>
+      <div class="tab" data-tab="items">Готовые изделия</div>
     </div>
 
-    <input id="search" class="search" placeholder="Поиск по названию, тегам, заметке…"/>
+    <input class="search" id="search" placeholder="Поиск по названию, тегам, заметке…" />
 
-    <div class="stats" id="stats">
+    <div class="stats">
       <div class="pill">Всего: <b id="statTotal">0 м</b></div>
       <div class="pill">Списано: <b id="statSpent">0 м</b></div>
     </div>
 
-    <div class="row">
-      <button class="btn btn--accent" id="btnAdd">+ Добавить ткань</button>
-    </div>
-
-    <div class="grid" id="list"></div>
+    <div class="list" id="list"></div>
   </div>
 
-  <!-- Modals -->
-  <dialog id="editDialog">
-    <form method="dialog" class="form" id="editForm">
-      <h3 id="dlgTitle" style="margin:0 0 6px;font-size:22px;font-weight:900">Добавить</h3>
-      <div class="bar tiny muted"><span id="dlgHint">Заполните поля и нажмите «Сохранить»</span><span id="dlgId"></span></div>
-      <div class="field"><label>Название</label><input required type="text" id="f_name"></div>
-      <div class="field" data-for="type"><label>Тип</label>
-        <select id="f_type">
-          <option>Хлопок</option><option>Лён</option><option>Шерсть</option><option>Шёлк</option><option>Синтетика</option>
-        </select>
-      </div>
-      <div class="field"><label>Количество (метры)</label><input required type="number" step="0.01" min="0" id="f_qty"></div>
-      <div class="field"><label>Теги (через запятую)</label><input type="text" id="f_tags" placeholder="розовый, детское, 150см"></div>
-      <div class="field"><label>Заметка</label><textarea id="f_note" placeholder="Особенности, где хранится и т. п."></textarea></div>
-      <div class="field">
-        <label>Фото (необязательно)</label>
-        <div class="filebox">
-          <img id="f_preview" class="preview" alt=""/>
-          <input id="f_file" type="file" accept="image/*">
-          <button type="button" class="btn tiny danger" id="btnClearPhoto">Удалить фото</button>
+  <!-- modal -->
+  <div class="modal-back" id="modalBack">
+    <div class="modal" role="dialog" aria-modal="true">
+      <div class="title" id="modalTitle"></div>
+      <form id="form">
+        <div class="grid" id="formGrid"></div>
+        <div class="actions">
+          <button type="button" class="btn ghost" id="btnDelete">Удалить</button>
+          <button type="button" class="btn" id="btnCancel">Отмена</button>
+          <button type="submit" class="btn primary" id="btnSave">Сохранить</button>
         </div>
-      </div>
-      <div class="bar">
-        <div style="display:flex;gap:8px;align-items:center">
-          <button type="button" class="btn danger" id="btnDelete">Удалить</button>
-          <button type="button" class="btn" id="btnSpend">Списать метры</button>
-        </div>
-        <div style="display:flex;gap:8px">
-          <button class="btn" value="cancel">Отмена</button>
-          <button class="btn btn--accent" id="btnSave" value="default">Сохранить</button>
-        </div>
-      </div>
-    </form>
-  </dialog>
-
-  <dialog id="viewDialog">
-    <div class="form">
-      <h3 style="margin:0 0 6px;font-size:22px;font-weight:900" id="v_name">—</h3>
-      <img id="v_img" class="preview" style="width:100%;height:auto;max-height:280px;object-fit:contain" alt="Фото">
-      <div class="field"><label>Количество</label><div id="v_qty">—</div></div>
-      <div class="field"><label>Заметка</label><div id="v_note">—</div></div>
-      <div class="field"><label>Теги</label><div id="v_tags">—</div></div>
-      <div class="bar"><div></div><button class="btn" onclick="document.getElementById('viewDialog').close()">Закрыть</button></div>
+      </form>
     </div>
-  </dialog>
+  </div>
+
+  <!-- lightbox -->
+  <div class="lightbox" id="lightbox"><img id="lightboxImg" alt=""></div>
 
 <script>
-// --- Storage layer -----------------------------------------------------------
-const STORAGE_KEY = 'od_data_v1';
-const defaultData = { fabrics:[], patterns:[], products:[] };
-
-function loadDB(){
-  try{ return JSON.parse(localStorage.getItem(STORAGE_KEY)) || structuredClone(defaultData); }
-  catch(e){ console.warn(e); return structuredClone(defaultData); }
-}
-function saveDB(db){ localStorage.setItem(STORAGE_KEY, JSON.stringify(db)); }
-
-let DB = loadDB();
-let currentTab = 'fabrics';
-let editingId = null; // for fabrics only in this build
-
-// --- Helpers -----------------------------------------------------------------
-const $ = sel => document.querySelector(sel);
+/** -------- store & helpers -------- */
+const LS_KEY = 'ollys-dream-v3';
 function uid(){ return Math.random().toString(36).slice(2,9); }
-function readFileAsDataURL(file){
+function load(){
+  try{
+    const raw = localStorage.getItem(LS_KEY);
+    if(!raw) return { fabrics:[], patterns:[], items:[] };
+    const data = JSON.parse(raw);
+    ['fabrics','patterns','items'].forEach(k=> data[k] ||= []);
+    return data;
+  }catch(e){ return { fabrics:[], patterns:[], items:[] }; }
+}
+function save(){ localStorage.setItem(LS_KEY, JSON.stringify(db)); }
+function dataURLFromFile(file){
   return new Promise((resolve,reject)=>{
     const r = new FileReader();
-    r.onerror = reject;
     r.onload = ()=> resolve(r.result);
+    r.onerror = reject;
     r.readAsDataURL(file);
   });
 }
-function fmtQty(v){ return (Number(v)||0).toLocaleString('ru-RU', { maximumFractionDigits: 2 }) + ' м'; }
-function toChips(str){
-  return (str||'').split(',').map(s=>s.trim()).filter(Boolean);
-}
+let db = load();
+let currentTab = 'fabrics';
+let editing = null; // {type, id}
 
-// --- UI: render --------------------------------------------------------------
-const listEl = $('#list');
-const statTotal = $('#statTotal');
-const statSpent = $('#statSpent');
-
-function render(){
-  // Stats only for fabrics
-  const total = DB.fabrics.reduce((s,f)=>s+(Number(f.qty)||0),0);
-  const spent = DB.fabrics.reduce((s,f)=>s+(Number(f.spent)||0),0);
-  statTotal.textContent = fmtQty(total);
-  statSpent.textContent = fmtQty(spent);
-
-  // controls per tab
-  const btnAdd = $('#btnAdd');
-  if(currentTab==='fabrics'){ btnAdd.textContent = '+ Добавить ткань'; btnAdd.style.display='inline-block'; }
-  else if(currentTab==='patterns'){ btnAdd.textContent = '+ Добавить выкройку'; btnAdd.style.display='inline-block'; }
-  else { btnAdd.textContent = '+ Добавить изделие'; btnAdd.style.display='inline-block'; }
-
-  // list
-  const q = $('#search').value.trim().toLowerCase();
-  listEl.innerHTML='';
-  const arr = DB[currentTab];
-  if(!arr.length){
-    listEl.innerHTML = '<div class="muted" style="opacity:.7">Пока пусто.</div>';
-    return;
-  }
-  const frag = document.createDocumentFragment();
-  arr
-    .filter(item=>{
-      const hay = (item.name+' '+(item.note||'')+' '+(item.tags||'')).toLowerCase();
-      return !q || hay.includes(q);
-    })
-    .forEach(item=>{
-      const card = document.createElement('div');
-      card.className='card';
-      const body = document.createElement('div');
-      body.className='card__body';
-      const grid = document.createElement('div');
-      grid.className='row-split';
-
-      const img = document.createElement('img');
-      img.className='thumb';
-      img.src = item.photo || '';
-      img.alt='';
-      grid.appendChild(img);
-
-      const right = document.createElement('div');
-      const name = document.createElement('div');
-      name.className='name';
-      name.textContent=item.name;
-      if(currentTab==='fabrics'){
-        name.addEventListener('click',()=>openView(item));
-      }
-      right.appendChild(name);
-
-      if(currentTab==='fabrics'){
-        // show note instead of type
-        const note = document.createElement('div');
-        note.className='muted';
-        note.textContent = item.note ? item.note : '—';
-        right.appendChild(note);
-
-        const qty = document.createElement('div');
-        qty.style.marginTop='6px';
-        qty.innerHTML = '<b>Кол-во:</b> '+fmtQty(item.qty||0)+
-                        (item.spent? ' &nbsp;&nbsp;<span class="muted">(Списано: '+fmtQty(item.spent)+')</span>' : '');
-        right.appendChild(qty);
-      }else{
-        const meta = document.createElement('div');
-        meta.className='muted';
-        meta.textContent=item.note||'—';
-        right.appendChild(meta);
-      }
-
-      const chips = document.createElement('div');
-      chips.className='chips';
-      toChips(item.tags).forEach(c=>{
-        const el=document.createElement('div');el.className='chip';el.textContent=c;chips.appendChild(el);
-      });
-      right.appendChild(chips);
-
-      const actions=document.createElement('div');
-      actions.className='row-actions';
-
-      if(currentTab==='fabrics'){
-        const btnEdit=document.createElement('span');
-        btnEdit.className='link';
-        btnEdit.textContent='Изменить';
-        btnEdit.onclick=()=>openEdit(item.id);
-        actions.appendChild(btnEdit);
-
-        const btnSpend=document.createElement('span');
-        btnSpend.className='link';
-        btnSpend.textContent='Списать';
-        btnSpend.onclick=()=>spendMeters(item.id);
-        actions.appendChild(btnSpend);
-      }else{
-        const btnEdit=document.createElement('span');
-        btnEdit.className='link';
-        btnEdit.textContent='Изменить';
-        btnEdit.onclick=()=>openEditGeneric(currentTab,item.id);
-        actions.appendChild(btnEdit);
-      }
-
-      right.appendChild(actions);
-      grid.appendChild(right);
-      body.appendChild(grid);
-      card.appendChild(body);
-      frag.appendChild(card);
-    });
-  listEl.appendChild(frag);
-}
-
-function openView(item){
-  $('#v_name').textContent=item.name;
-  $('#v_img').src=item.photo||'';
-  $('#v_qty').textContent=fmtQty(item.qty||0)+(item.spent? ' (списано: '+fmtQty(item.spent)+')':'');
-  $('#v_note').textContent=item.note||'—';
-  $('#v_tags').textContent=toChips(item.tags).join(', ')||'—';
-  $('#viewDialog').showModal();
-}
-
-// --- Edit fabric -------------------------------------------------------------
-const dlg = $('#editDialog');
-const f_name = $('#f_name');
-const f_type = $('#f_type');
-const f_qty = $('#f_qty');
-const f_tags = $('#f_tags');
-const f_note = $('#f_note');
-const f_file = $('#f_file');
-const f_preview = $('#f_preview');
-
-$('#btnClearPhoto').onclick = ()=>{ f_preview.src=''; f_file.value=''; };
-
-f_file.addEventListener('change', async (e)=>{
-  const file = e.target.files[0];
-  if(!file) return;
-  const url = await readFileAsDataURL(file);
-  f_preview.src = url;
-});
-
-function openEdit(id){
-  editingId = id || null;
-  $('#dlgTitle').textContent = id ? 'Изменить ткань' : 'Добавить ткань';
-  $('#dlgHint').textContent = id ? 'Правьте поля и сохраните' : 'Заполните поля и сохраните';
-  $('#btnDelete').style.display = id ? 'inline-block' : 'none';
-  $('#btnSpend').style.display = id ? 'inline-block' : 'none';
-  document.querySelector('[data-for="type"]').style.display = 'grid';
-
-  let obj = {name:'', type:'Хлопок', qty:0, tags:'', note:'', photo:''};
-  if(id){
-    obj = DB.fabrics.find(f=>f.id===id) || obj;
-  }
-  f_name.value = obj.name||'';
-  f_type.value = obj.type||'Хлопок';
-  f_qty.value = obj.qty||0;
-  f_tags.value = obj.tags||'';
-  f_note.value = obj.note||'';
-  f_preview.src = obj.photo||'';
-
-  dlg.showModal();
-}
-
-function spendMeters(id){
-  const item = DB.fabrics.find(f=>f.id===id);
-  if(!item) return;
-  let val = prompt('Списать метров (например 0.5):','');
-  if(val===null) return;
-  val = Number(val);
-  if(isNaN(val) || val<0){ alert('Введите число.'); return; }
-  if(val>(Number(item.qty)||0)){ if(!confirm('Больше, чем остаток. Все равно списать?')) return; }
-  item.qty = Number(item.qty)||0; 
-  item.qty = Math.max(0, item.qty - val);
-  item.spent = (Number(item.spent)||0) + val;
-  saveDB(DB);
-  render();
-}
-
-$('#btnSave').addEventListener('click', async (e)=>{
-  e.preventDefault();
-  const data = {
-    id: editingId || uid(),
-    name: f_name.value.trim(),
-    type: f_type.value,
-    qty: Number(f_qty.value)||0,
-    tags: f_tags.value.trim(),
-    note: f_note.value.trim(),
-    photo: f_preview.src || ''
-  };
-  if(!data.name){ alert('Название обязательно'); return; }
-  if(editingId){
-    const idx = DB.fabrics.findIndex(x=>x.id===editingId);
-    if(idx>-1){ DB.fabrics[idx] = {...DB.fabrics[idx], ...data}; }
-  }else{
-    DB.fabrics.unshift({...data, spent:0});
-  }
-  saveDB(DB);
-  dlg.close();
-  render();
-});
-
-$('#btnDelete').onclick = ()=>{
-  if(!editingId) return;
-  if(confirm('Удалить ткань безвозвратно?')){
-    DB.fabrics = DB.fabrics.filter(x=>x.id!==editingId);
-    saveDB(DB);
-    dlg.close();
-    render();
-  }
-};
-$('#btnSpend').onclick = ()=>{ if(editingId) spendMeters(editingId); };
-
-// --- Generic add/edit for other tabs (simplified fields) --------------------
-function openEditGeneric(tab, id){
-  // reuse same dialog but hide "Тип" и "Списать"
-  editingId = id || null;
-  $('#dlgTitle').textContent = id ? 'Изменить' : 'Добавить';
-  $('#dlgHint').textContent = 'Заполните поля и сохраните';
-  $('#btnDelete').style.display = id ? 'inline-block' : 'none';
-  $('#btnSpend').style.display = 'none';
-  document.querySelector('[data-for="type"]').style.display = 'none';
-
-  let obj = {name:'', qty:0, tags:'', note:'', photo:''};
-  if(id){ obj = (DB[tab].find(x=>x.id===id)) || obj; }
-
-  f_name.value = obj.name||'';
-  f_qty.value = obj.qty||0;
-  f_tags.value = obj.tags||'';
-  f_note.value = obj.note||'';
-  f_preview.src = obj.photo||'';
-  dlg.showModal();
-
-  // override save for this open
-  const handler = async (e)=>{
-    e.preventDefault();
-    const data = {
-      id: editingId || uid(),
-      name: f_name.value.trim(),
-      qty: Number(f_qty.value)||0,
-      tags: f_tags.value.trim(),
-      note: f_note.value.trim(),
-      photo: f_preview.src || ''
-    };
-    if(!data.name){ alert('Название обязательно'); return; }
-    if(editingId){
-      const idx = DB[tab].findIndex(x=>x.id===editingId);
-      if(idx>-1){ DB[tab][idx] = {...DB[tab][idx], ...data}; }
-    }else{
-      DB[tab].unshift(data);
-    }
-    saveDB(DB);
-    dlg.close();
-    render();
-    $('#btnSave').removeEventListener('click', handler); // clean
-  };
-  $('#btnSave').addEventListener('click', handler);
-  $('#btnDelete').onclick = ()=>{
-    if(!editingId) return;
-    if(confirm('Удалить запись?')){
-      DB[tab] = DB[tab].filter(x=>x.id!==editingId);
-      saveDB(DB); dlg.close(); render();
-    }
-  };
-}
-
-// --- Controls ----------------------------------------------------------------
-$('#btnAdd').onclick = ()=>{
-  if(currentTab==='fabrics') openEdit();
-  else openEditGeneric(currentTab);
-};
-$('#search').oninput = ()=> render();
+/** -------- UI binding -------- */
+const listEl = document.getElementById('list');
+const searchEl = document.getElementById('search');
+const statTotal = document.getElementById('statTotal');
+const statSpent = document.getElementById('statSpent');
+const btnAdd = document.getElementById('btnAdd');
+const tabNameSpan = document.querySelector('.tabName');
 
 document.querySelectorAll('.tab').forEach(t=>{
   t.addEventListener('click',()=>{
-    document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
+    document.querySelectorAll('.tab').forEach(tt=>tt.classList.remove('active'));
     t.classList.add('active');
     currentTab = t.dataset.tab;
-    // toggle stats: only for fabrics
-    document.getElementById('stats').style.display = currentTab==='fabrics' ? 'flex':'none';
+    tabNameSpan.textContent = currentTab==='fabrics'?'ткань':currentTab==='patterns'?'выкройку':'изделие';
     render();
   });
 });
+btnAdd.addEventListener('click',()=> openForm(currentTab, null));
+searchEl.addEventListener('input', render);
 
-// Export/Import
-$('#btnExport').onclick = ()=>{
-  const json = JSON.stringify(DB, null, 2);
-  const blob = new Blob([json], {type:'application/json'});
+/** -------- Import / Export -------- */
+document.getElementById('btnExport').addEventListener('click',()=>{
+  const blob = new Blob([JSON.stringify(db,null,2)],{type:'application/json'});
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
   a.download = 'ollys_dream_backup.json';
   a.click();
   URL.revokeObjectURL(a.href);
-};
-$('#importFile').addEventListener('change', async (e)=>{
-  const file = e.target.files[0];
-  if(!file) return;
+});
+document.getElementById('btnImport').addEventListener('click',()=>{
+  document.getElementById('importInput').click();
+});
+document.getElementById('importInput').addEventListener('change', async (e)=>{
+  const f = e.target.files[0];
+  if(!f) return;
   try{
-    const text = await file.text();
-    const data = JSON.parse(text);
-    if(!data || typeof data!=='object') throw new Error('bad');
-    DB = Object.assign(structuredClone(defaultData), data);
-    saveDB(DB);
-    alert('Импортировано, страница обновит список.');
-    render();
-  }catch(err){
-    alert('Не удалось импортировать JSON.');
-  }finally{ e.target.value=''; }
+    const text = await f.text();
+    const obj = JSON.parse(text);
+    if(!obj || typeof obj!=='object') throw 0;
+    db = { fabrics: obj.fabrics||[], patterns: obj.patterns||[], items: obj.items||[] };
+    save(); render();
+    alert('Импорт выполнен.');
+  }catch(err){ alert('Не удалось импортировать файл.'); }
+  e.target.value='';
 });
 
-// Initial
+/** -------- Render -------- */
+function render(){
+  const q = searchEl.value.trim().toLowerCase();
+  listEl.innerHTML = '';
+  const coll = db[currentTab];
+  const filtered = coll.filter(it=>{
+    const hay = (it.name+' '+(it.tags||[]).join(' ')+' '+(it.note||it.desc||'')).toLowerCase();
+    return hay.includes(q);
+  });
+  // stats (только для тканей)
+  if(currentTab==='fabrics'){
+    const total = db.fabrics.reduce((s,f)=>s+(Number(f.qty)||0),0);
+    const spent = db.fabrics.reduce((s,f)=>s+(Number(f.spent)||0),0);
+    statTotal.textContent = total+' м';
+    statSpent.textContent = spent+' м';
+  }else{
+    statTotal.textContent = '—';
+    statSpent.textContent = '—';
+  }
+  filtered.forEach(it=> listEl.appendChild(card(it, currentTab)));
+}
+function makeLinkChip(type,id,label){
+  const el = document.createElement('span');
+  el.className='link-chip js-link';
+  el.dataset.type=type; el.dataset.id=id;
+  el.textContent=label;
+  return el;
+}
+function card(it, type){
+  const root = document.createElement('div');
+  root.className = 'card';
+  // thumb
+  const th = document.createElement('div');
+  th.className='thumb'; th.title='Открыть фото';
+  if(it.photo){
+    const img = document.createElement('img'); img.src = it.photo; th.appendChild(img);
+  }else{ th.textContent='Фото'; }
+  th.addEventListener('click',()=> openLightbox(it.photo));
+  root.appendChild(th);
+  const mid = document.createElement('div'); mid.className='grow';
+  const name = document.createElement('div'); name.className='name a'; name.textContent=it.name||'(без названия)';
+  name.addEventListener('click',()=> openView(type, it.id));
+  mid.appendChild(name);
+  if(type==='fabrics'){
+    const line = document.createElement('div'); line.className='muted'; line.textContent = (it.note||'').trim() || '—'; mid.appendChild(line);
+    const qty = document.createElement('div'); qty.className='muted'; qty.style.marginTop='4px'; qty.innerHTML = 'Кол-во: <b>'+ (Number(it.qty)||0) +' м</b>'; mid.appendChild(qty);
+  }else if(type==='patterns'){
+    const line = document.createElement('div'); line.className='muted'; line.textContent = (it.desc||'Выкройка'); mid.appendChild(line);
+  }else{
+    const line = document.createElement('div'); line.className='muted'; line.textContent = (it.desc||'Изделие'); mid.appendChild(line);
+  }
+  const tg = document.createElement('div'); tg.className='tags';
+  (it.tags||[]).forEach(t=>{ const span=document.createElement('span'); span.className='tag'; span.textContent=t; tg.appendChild(span); });
+  mid.appendChild(tg);
+  const links = document.createElement('div'); links.className='links';
+  if(type!=='fabrics' && (it.fabricIds||[]).length){
+    (it.fabricIds||[]).forEach(fid=>{ const f = db.fabrics.find(x=>x.id===fid); if(f) links.appendChild(makeLinkChip('fabrics', fid, 'Ткань: '+f.name)); });
+  }
+  if(type!=='patterns' && (it.patternIds||[]).length){
+    (it.patternIds||[]).forEach(pid=>{ const p = db.patterns.find(x=>x.id===pid); if(p) links.appendChild(makeLinkChip('patterns', pid, 'Выкр.: '+p.name)); });
+  }
+  if(links.children.length) mid.appendChild(links);
+  root.appendChild(mid);
+  const actions = document.createElement('div'); actions.style.display='flex'; actions.style.flexDirection='column'; actions.style.gap='8px';
+  const btnEdit = document.createElement('button'); btnEdit.className='btn'; btnEdit.textContent='Изменить'; btnEdit.addEventListener('click',()=> openForm(type, it.id)); actions.appendChild(btnEdit);
+  if(type==='fabrics'){ const btnWriteoff=document.createElement('button'); btnWriteoff.className='btn ghost'; btnWriteoff.textContent='Списать'; btnWriteoff.addEventListener('click',()=> writeOff(it.id)); actions.appendChild(btnWriteoff); }
+  root.appendChild(actions);
+  root.addEventListener('click', (e)=>{ const el = e.target.closest('.js-link'); if(!el) return; e.stopPropagation(); openView(el.dataset.type, el.dataset.id); });
+  return root;
+}
+
+/** -------- Lightbox -------- */
+const lightbox = document.getElementById('lightbox');
+const lightboxImg = document.getElementById('lightboxImg');
+function openLightbox(src){ if(!src) return; lightboxImg.src = src; lightbox.style.display='flex'; }
+lightbox.addEventListener('click',()=>{ lightbox.style.display='none'; lightboxImg.src=''; });
+
+/** -------- Forms & view modals -------- */
+const modalBack = document.getElementById('modalBack');
+const modalTitle = document.getElementById('modalTitle');
+const form = document.getElementById('form');
+const formGrid = document.getElementById('formGrid');
+const btnDelete = document.getElementById('btnDelete');
+const btnCancel = document.getElementById('btnCancel');
+const btnSave = document.getElementById('btnSave');
+btnCancel.addEventListener('click', closeModal);
+
+function closeModal(){ modalBack.style.display='none'; form.reset(); formGrid.innerHTML=''; editing=null; btnSave.style.display=''; btnDelete.style.display=''; btnCancel.textContent='Отмена'; }
+
+function viewTitleFor(type){
+  return type==='fabrics' ? 'Ткань' : type==='patterns' ? 'Выкройка' : 'Изделие';
+}
+
+function openView(type, id){
+  const coll = db[type];
+  const it = coll.find(x=>x.id===id);
+  if(!it) return;
+  // read-only details + кнопка "Редактировать"
+  modalTitle.textContent = viewTitleFor(type) + ': ' + it.name;
+  formGrid.innerHTML='';
+  const left = document.createElement('div');
+  left.innerHTML = `
+    <label>${type==='fabrics'?'Заметка':'Описание'}</label>
+    <div class="muted" style="padding:10px 0 16px">${(it.note||it.desc||'—').toString().replace(/</g,'&lt;')}</div>
+    <label>Теги</label>
+    <div class="muted" style="padding:10px 0 16px">${(it.tags||[]).join(', ')||'—'}</div>
+    ${type==='fabrics' ? `<label>Кол-во (м)</label><div class="muted" style="padding:10px 0 16px"><b>${Number(it.qty)||0}</b> (списано: <b>${Number(it.spent)||0}</b>)</div>`:''}
+  `;
+  const right = document.createElement('div');
+  right.innerHTML = `
+    <label>Фото</label>
+    <div class="thumb" id="viewPhoto">${it.photo?`<img src="${it.photo}" alt="">`:'—'}</div>
+    <div style="margin-top:8px" class="links"></div>
+  `;
+  formGrid.appendChild(left); formGrid.appendChild(right);
+  // render cross-links
+  const links = right.querySelector('.links');
+  (it.fabricIds||[]).forEach(fid=>{ const f = db.fabrics.find(x=>x.id===fid); if(f) links.appendChild(makeLinkChip('fabrics', fid, 'Ткань: '+f.name)); });
+  (it.patternIds||[]).forEach(pid=>{ const p = db.patterns.find(x=>x.id===pid); if(p) links.appendChild(makeLinkChip('patterns', pid, 'Выкр.: '+p.name)); });
+  const ph = right.querySelector('#viewPhoto'); ph?.addEventListener('click',()=> it.photo && openLightbox(it.photo));
+  // настройки кнопок
+  btnDelete.style.display='none';
+  btnSave.style.display='none';
+  btnCancel.textContent='Закрыть';
+  // добавим "Редактировать"
+  const editBtn = document.createElement('button');
+  editBtn.type='button'; editBtn.className='btn'; editBtn.textContent='Редактировать';
+  editBtn.style.marginLeft='auto';
+  const actionsRow = document.createElement('div'); actionsRow.className='actions';
+  actionsRow.appendChild(document.createElement('span'));
+  actionsRow.appendChild(editBtn);
+  form.appendChild(actionsRow);
+  editBtn.addEventListener('click', ()=>{ // перейти в режим редактирования
+    actionsRow.remove();
+    openForm(type, id);
+  });
+  modalBack.style.display='flex';
+}
+
+function openForm(type, id){
+  editing = {type,id};
+  const coll = db[type];
+  const it = id ? {...coll.find(x=>x.id===id)} : { id: uid(), name:'', tags:[], photo:'', note:'', qty:0, spent:0, patternIds:[], fabricIds:[] };
+  modalTitle.textContent = (id?'Изменить ':'Добавить ') + (type==='fabrics'?'ткань':type==='patterns'?'выкройку':'изделие');
+  formGrid.innerHTML = '';
+  const htmlLeft = document.createElement('div');
+  htmlLeft.innerHTML = `
+    <label>Название</label>
+    <input required id="f_name" value="${it.name||''}"/>
+    ${type==='fabrics'?`
+      <label>Количество (метры)</label>
+      <input id="f_qty" type="number" min="0" step="0.01" value="${it.qty||0}"/>
+    `:''}
+    <label>Теги (через запятую)</label>
+    <input id="f_tags" value="${(it.tags||[]).join(', ')}"/>
+    <label>${type==='fabrics'?'Заметка':'Описание'}</label>
+    <textarea id="f_note">${(it.note||it.desc||'')}</textarea>
+  `;
+  const htmlRight = document.createElement('div');
+  htmlRight.innerHTML = `
+    <label>Фото (необязательно)</label>
+    <div class="thumb" id="thumbBox">${it.photo?`<img id="thumbPrev" src="${it.photo}"/>`:`<span id="thumbPrev">Нет фото</span>`}</div>
+    <input id="f_photo" type="file" accept="image/*" style="margin-top:8px"/>
+    <div class="row" style="gap:8px;margin-top:8px">
+      <button type="button" class="btn ghost" id="btnDelPhoto">Удалить фото</button>
+      <button type="button" class="btn" id="btnPreviewBig">Открыть большое</button>
+    </div>
+    <div style="height:8px"></div>
+    <label>Ссылки</label>
+    <div style="font-size:12px;color:var(--ink-dim);margin-bottom:6px">Выберите связанные элементы — по ним можно будет открыть карточку из списка.</div>
+    <div class="row" style="gap:8px;flex-wrap:wrap">
+      ${ type!=='fabrics' ? `<select id="f_fabrics" multiple style="min-width:240px;max-width:100%;height:92px"></select>`:''}
+      ${ type!=='patterns' ? `<select id="f_patterns" multiple style="min-width:240px;max-width:100%;height:92px"></select>`:''}
+    </div>
+  `;
+  formGrid.appendChild(htmlLeft);
+  formGrid.appendChild(htmlRight);
+  // populate selects
+  if(type!=='fabrics'){
+    const sel = document.getElementById('f_fabrics');
+    db.fabrics.forEach(f=>{
+      const o = document.createElement('option'); o.value=f.id; o.textContent='Ткань: '+f.name;
+      if((it.fabricIds||[]).includes(f.id)) o.selected=true;
+      sel.appendChild(o);
+    });
+  }
+  if(type!=='patterns'){
+    const sel = document.getElementById('f_patterns');
+    db.patterns.forEach(p=>{
+      const o = document.createElement('option'); o.value=p.id; o.textContent='Выкр.: '+p.name;
+      if((it.patternIds||[]).includes(p.id)) o.selected=true;
+      sel.appendChild(o);
+    });
+  }
+  // handlers: photo preview + lightbox
+  const thumbBox = document.getElementById('thumbBox');
+  const thumbPrev = document.getElementById('thumbPrev');
+  document.getElementById('f_photo').addEventListener('change', async (e)=>{
+    const file = e.target.files[0]; if(!file) return;
+    const dataUrl = await dataURLFromFile(file);
+    it.photo = dataUrl;
+    thumbBox.innerHTML = `<img id="thumbPrev" src="${dataUrl}">`;
+  });
+  document.getElementById('btnDelPhoto').addEventListener('click',()=>{
+    it.photo=''; thumbBox.innerHTML = '<span id="thumbPrev">Нет фото</span>';
+  });
+  document.getElementById('btnPreviewBig').addEventListener('click',()=>{
+    if(it.photo) openLightbox(it.photo);
+  });
+  // а также клик по самой миниатюре
+  thumbBox.addEventListener('click',()=>{ const img = thumbBox.querySelector('img'); if(img) openLightbox(img.src); });
+
+  // buttons
+  btnDelete.style.display = id ? '' : 'none';
+  btnSave.style.display = '';
+  btnCancel.textContent='Отмена';
+  modalBack.style.display='flex';
+
+  btnDelete.onclick = ()=>{
+    if(confirm('Удалить запись?')){
+      const idx = coll.findIndex(x=>x.id===it.id);
+      if(idx>=0) coll.splice(idx,1);
+      // чистим ссылки в других сущностях
+      ['fabrics','patterns','items'].forEach(k=>{
+        db[k].forEach(x=>{
+          x.fabricIds = (x.fabricIds||[]).filter(v=>v!==it.id);
+          x.patternIds = (x.patternIds||[]).filter(v=>v!==it.id);
+        });
+      });
+      save(); closeModal(); render();
+    }
+  };
+  form.onsubmit = (ev)=>{
+    ev.preventDefault();
+    it.name = document.getElementById('f_name').value.trim() || '(без названия)';
+    const tags = document.getElementById('f_tags').value.trim();
+    it.tags = tags? tags.split(',').map(s=>s.trim()).filter(Boolean):[];
+    const note = document.getElementById('f_note').value;
+    if(type==='fabrics'){ it.note = note; it.qty = Number(document.getElementById('f_qty').value||0); }
+    if(type==='patterns'){ it.desc = note; }
+    if(type==='items'){ it.desc = note; }
+    if(type!=='fabrics'){ it.fabricIds = Array.from(document.getElementById('f_fabrics').selectedOptions||[]).map(o=>o.value); }
+    if(type!=='patterns'){ it.patternIds = Array.from(document.getElementById('f_patterns').selectedOptions||[]).map(o=>o.value); }
+    const idx = coll.findIndex(x=>x.id===it.id);
+    if(idx>=0) coll[idx] = it; else coll.push(it);
+    save(); closeModal(); render();
+  };
+}
+
+function writeOff(fabricId){
+  const f = db.fabrics.find(x=>x.id===fabricId);
+  if(!f) return;
+  const amount = prompt('Списать сколько метров?', '0');
+  const n = Number(amount||0);
+  if(!(n>0)) return;
+  f.spent = Number(f.spent||0) + n;
+  f.qty = Math.max(0, Number(f.qty||0) - n);
+  save(); render();
+}
+
+/** init */
 render();
 </script>
 </body>
