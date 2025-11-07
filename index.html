@@ -4,45 +4,363 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Olly’s Dream</title>
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="apple-mobile-web-app-title" content="Olly’s Dream">
-<link rel="apple-touch-icon" href="icon-needle-heart.png">
 <style>
-body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Inter,Arial,sans-serif;background:#fff5f8;color:#2d2d2d}
-header{padding:20px;text-align:center}
-h1{font-size:28px;margin-bottom:4px}
-.subtitle{color:#9a8b90;font-size:14px;margin:0}
-.nav{display:flex;justify-content:center;gap:10px;margin:14px 0}
-.tabbtn{border:none;padding:10px 16px;border-radius:20px;background:#ffe1ec;color:#7a5360;font-weight:500}
-.tabbtn.active{background:#ffb6c1;color:#fff}
-.card{background:#fff;border-radius:16px;box-shadow:0 1px 4px rgba(0,0,0,0.1);padding:12px;margin:10px}
-button.btn{border:none;padding:8px 14px;border-radius:16px;background:#ffb6c1;color:white;font-weight:500;margin-right:8px}
-input,textarea,select{width:100%;border:1px solid #f4c3cf;border-radius:12px;padding:8px;margin-top:4px;margin-bottom:8px}
-.grid{display:grid;gap:10px}
-.hidden{display:none}
+  :root{
+    --bg:#f9d9e6;
+    --card:#fff;
+    --accent:#f08ab0;
+    --accent-2:#ff5fa2;
+    --text:#222;
+    --muted:#6b7280;
+    --shadow: 0 10px 24px rgba(0,0,0,.08);
+    --radius:18px;
+  }
+  html,body{height:100%;}
+  body{
+    margin:0;
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", Inter, Roboto, Arial, "Segoe UI", system-ui, "Helvetica Neue", Helvetica, sans-serif;
+    background:var(--bg);
+    color:var(--text);
+    -webkit-tap-highlight-color: transparent;
+  }
+  .container{max-width:980px;margin:0 auto;padding:28px 16px 48px;}
+  h1{margin:0 0 10px;font-size:32px;letter-spacing:.2px}
+  .sub{color:var(--muted);margin-bottom:18px}
+  .tabs{display:flex;gap:14px;margin:8px 0 18px}
+  .tab{
+    border:none;border-radius:999px;padding:12px 20px;
+    background:#fff; box-shadow:var(--shadow); font-weight:700; font-size:18px;
+  }
+  .tab[aria-selected="true"]{background:linear-gradient(180deg,#ffd7ea,#ffc4e0); outline:2px solid #fff}
+  .toolbar{display:flex;gap:10px;flex-wrap:wrap;margin:8px 0 16px}
+  .btn{
+    background:#fff; border:none; border-radius:12px; padding:10px 14px;
+    box-shadow:var(--shadow); font-weight:600;
+  }
+  .list{display:flex;flex-direction:column;gap:14px}
+  .card{
+    background:#fff;border-radius:20px;box-shadow:var(--shadow);
+    padding:12px 14px;display:flex;align-items:center;gap:14px;
+  }
+  .thumb{width:72px;height:72px;border-radius:12px;object-fit:cover;background:#f3f4f6;flex:0 0 auto}
+  .title{font-size:22px;font-weight:800;margin:0 0 2px}
+  .meta{color:var(--muted);font-size:14px;margin:2px 0}
+  .grow{flex:1 1 auto}
+  .link{color:#1f6fff;text-decoration:underline;font-size:14px}
+  .chip{display:inline-block;background:#ffe4ef;color:#67364a;padding:6px 10px;border-radius:999px;font-weight:700}
+  /* Modal */
+  .backdrop{
+    position:fixed;inset:0;background:rgba(0,0,0,.45);
+    display:none; /* hidden by default */
+    align-items:flex-end; justify-content:center;
+    padding:16px; z-index:9999; /* high to sit above everything */
+  }
+  .backdrop[aria-hidden="false"]{display:flex}
+  .modal{
+    background:#fff;border-radius:22px;width:100%;max-width:860px;max-height:85vh;
+    overflow:auto; -webkit-overflow-scrolling: touch; box-shadow:var(--shadow);
+  }
+  .modal header{padding:14px 18px 6px;font-weight:900;font-size:20px}
+  .modal section{padding:0 18px 18px}
+  .row{display:flex;flex-direction:column;gap:8px;margin:10px 0}
+  .row label{font-weight:800}
+  .row input[type=text], .row textarea{
+    appearance:none; border-radius:12px; border:1px solid #e5e7eb; padding:12px;
+    font-size:16px; background:#fff;
+  }
+  .row textarea{min-height:110px;resize:vertical}
+  .row .file{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+  .modal footer{display:flex;gap:10px;justify-content:flex-end;padding:14px 18px;border-top:1px solid #f0f0f0;position:sticky;bottom:0;background:#fff}
+  .btn-secondary{background:#f3f4f6}
+  .btn-primary{background:linear-gradient(180deg,#ffa3c9,#ff6fb3);color:#fff;font-weight:900}
+  .hidden{display:none !important}
 </style>
 </head>
 <body>
-<header>
-  <img src="icon-needle-heart.png" alt="logo" width="60" height="60" style="border-radius:50%;margin-bottom:6px">
-  <h1>Olly’s Dream</h1>
-  <p class="subtitle">Швейный дневник с любовью 💖</p>
-</header>
-<div class="nav">
-  <button class="tabbtn active" id="tab1">Ткани</button>
-  <button class="tabbtn" id="tab2">Выкройки</button>
-  <button class="tabbtn" id="tab3">Изделия</button>
-</div>
-<div id="content" class="grid" style="padding:0 14px">
-  <div class="card">Добро пожаловать в твою обновлённую версию Olly’s Dream 💗<br>Чтобы добавить на экран iPhone: нажми <b>Поделиться → Добавить на экран домой</b>.</div>
-</div>
+  <div class="container">
+    <h1>Olly’s Dream</h1>
+    <div class="sub">Ткани • Выкройки • Готовые изделия</div>
+
+    <div class="tabs" role="tablist">
+      <button class="tab" role="tab" data-tab="fabrics" aria-selected="true">Ткани</button>
+      <button class="tab" role="tab" data-tab="patterns" aria-selected="false">Выкройки</button>
+      <button class="tab" role="tab" data-tab="products" aria-selected="false">Изделия</button>
+    </div>
+
+    <div class="toolbar">
+      <button class="btn" id="exportBtn" type="button">Экспорт JSON</button>
+      <label class="btn" for="importInput" style="cursor:pointer;">Импорт JSON</label>
+      <input id="importInput" type="file" accept="application/json" class="hidden">
+      <button class="btn" id="addBtn" type="button">+ Добавить</button>
+    </div>
+
+    <div id="lists">
+      <div class="list" data-list="fabrics"></div>
+      <div class="list hidden" data-list="patterns"></div>
+      <div class="list hidden" data-list="products"></div>
+    </div>
+  </div>
+
+  <!-- Modal -->
+  <div class="backdrop" id="backdrop" aria-hidden="true">
+    <form class="modal" id="modalForm">
+      <header id="modalTitle">Добавить</header>
+      <section>
+        <div class="row"><label>Название</label><input type="text" id="field-name" autocomplete="off"></div>
+        <div class="row" id="row-qty"><label>Количество (м)</label><input type="text" id="field-qty" inputmode="decimal" autocomplete="off"></div>
+        <div class="row"><label>Описание</label><textarea id="field-note" placeholder="Заметка / описание"></textarea></div>
+
+        <div class="row">
+          <label>Фото</label>
+          <div class="file">
+            <input type="file" id="field-photo" accept="image/*">
+            <button type="button" class="btn btn-secondary" id="openPhoto">Открыть большое</button>
+          </div>
+          <img id="photoPreview" class="thumb hidden" alt="превью">
+        </div>
+
+        <div class="row">
+          <label>Файл (PDF или изображение)</label>
+          <input type="file" id="field-file" accept="application/pdf,image/*">
+          <div id="fileInfo" class="meta"></div>
+        </div>
+      </section>
+      <footer>
+        <button type="button" class="btn btn-secondary" id="cancelBtn">Отмена</button>
+        <button type="submit" class="btn btn-primary" id="saveBtn">Сохранить</button>
+      </footer>
+    </form>
+  </div>
+
 <script>
-document.querySelectorAll('.tabbtn').forEach(b=>b.onclick=()=>{
-  document.querySelectorAll('.tabbtn').forEach(x=>x.classList.remove('active'));
-  b.classList.add('active');
-  document.getElementById('content').innerHTML='<div class="card">Раздел '+b.textContent+' в разработке 💕</div>';
-});
+(function(){
+  const LS_KEY = 'ollys_dream_v2';
+  const $ = (sel, root=document)=>root.querySelector(sel);
+  const $$= (sel, root=document)=>Array.from(root.querySelectorAll(sel));
+
+  // State
+  let state = load() || {tab:'fabrics', items:{fabrics:[], patterns:[], products:[]}};
+  let editing = null; // {type, id}
+
+  // ---------- helpers ----------
+  function load(){ try{ return JSON.parse(localStorage.getItem(LS_KEY)); }catch(e){ return null; } }
+  function save(){ localStorage.setItem(LS_KEY, JSON.stringify(state)); }
+  function uid(){ return Math.random().toString(36).slice(2,10); }
+
+  function setTab(tab){
+    state.tab = tab; save();
+    $$('.tab').forEach(b=> b.setAttribute('aria-selected', b.dataset.tab===tab ? 'true':'false'));
+    $$('.list').forEach(list => {
+      list.classList.toggle('hidden', list.dataset.list !== tab);
+    });
+    render();
+  }
+
+  function openModal(title){
+    $('#modalTitle').textContent = title;
+    // show qty only for fabrics
+    $('#row-qty').classList.toggle('hidden', state.tab!=='fabrics');
+    $('#backdrop').setAttribute('aria-hidden','false');
+    // avoid background scroll
+    document.body.style.overflow='hidden';
+    $('#field-name').focus({preventScroll:true});
+  }
+  function closeModal(){
+    $('#backdrop').setAttribute('aria-hidden','true');
+    document.body.style.overflow='';
+    editing = null;
+    $('#modalForm').reset();
+    $('#photoPreview').classList.add('hidden');
+    $('#fileInfo').textContent='';
+  }
+
+  function fileToDataURL(file){
+    return new Promise((res,rej)=>{
+      const r = new FileReader();
+      r.onload = () => res(r.result);
+      r.onerror = rej;
+      r.readAsDataURL(file);
+    });
+  }
+
+  // ---------- render ----------
+  function render(){
+    ['fabrics','patterns','products'].forEach(type=>{
+      const container = document.querySelector(`.list[data-list="${type}"]`);
+      container.innerHTML = '';
+      const arr = state.items[type];
+      if(!arr || !arr.length){
+        const empty = document.createElement('div');
+        empty.className='meta';
+        empty.style.padding='4px 8px 18px';
+        empty.textContent='Пусто. Нажмите «+ Добавить»';
+        container.appendChild(empty);
+        return;
+      }
+      arr.forEach(item=>{
+        const card = document.createElement('div');
+        card.className='card';
+        const img = document.createElement('img');
+        img.className='thumb';
+        img.alt='фото';
+        if(item.photo) img.src=item.photo; else img.classList.add('hidden');
+        img.dataset.action='previewPhoto'; img.dataset.type=type; img.dataset.id=item.id;
+        const grow = document.createElement('div');
+        grow.className='grow';
+        const h = document.createElement('div');
+        h.className='title'; h.textContent=item.name || 'Без названия';
+        h.tabIndex=0; h.dataset.action='openCard'; h.dataset.type=type; h.dataset.id=item.id;
+        const m1 = document.createElement('div'); m1.className='meta';
+        if(type==='fabrics'){
+          m1.textContent = item.note ? item.note : '';
+          const m2 = document.createElement('div'); m2.className='meta';
+          m2.textContent = (item.qty ? ('Кол-во: ' + item.qty + ' м') : '');
+          grow.appendChild(h); grow.appendChild(m1); grow.appendChild(m2);
+        } else {
+          m1.textContent = item.note || '';
+          grow.appendChild(h); grow.appendChild(m1);
+        }
+        const edit = document.createElement('button');
+        edit.type='button'; edit.className='btn'; edit.textContent='Изменить';
+        edit.dataset.action='edit'; edit.dataset.type=type; edit.dataset.id=item.id;
+
+        card.appendChild(img); card.appendChild(grow); card.appendChild(edit);
+        container.appendChild(card);
+      });
+    });
+  }
+
+  // ---------- initial ----------
+  // Tabs: delegate clicks & touch
+  document.addEventListener('click', (e)=>{
+    const tab = e.target.closest('.tab');
+    if(tab){ e.preventDefault(); setTab(tab.dataset.tab); return; }
+
+    const actEl = e.target.closest('[data-action]');
+    if(actEl){
+      const action = actEl.dataset.action;
+      const type = actEl.dataset.type;
+      const id = actEl.dataset.id;
+      const arr = state.items[type];
+      const item = arr && arr.find(x=>x.id===id);
+      if(action==='edit' && item){
+        editing = {type,id};
+        $('#field-name').value = item.name || '';
+        $('#field-note').value = item.note || '';
+        $('#field-qty').value = item.qty || '';
+        if(item.photo){ $('#photoPreview').src=item.photo; $('#photoPreview').classList.remove('hidden'); }
+        $('#fileInfo').textContent = item.fileName ? item.fileName : '';
+        openModal('Изменить');
+        return;
+      }
+      if(action==='openCard' && item){
+        // простое окно с просмотром
+        alert((item.name||'Без названия') + (item.note?'\n\n'+item.note:''));
+        return;
+      }
+      if(action==='previewPhoto' && item && item.photo){
+        const w = window.open('about:blank','_blank');
+        w.document.write(`<img src="${item.photo}" style="width:100%;height:auto">`);
+        return;
+      }
+    }
+  }, {passive:false});
+
+  // Open Add
+  $('#addBtn').addEventListener('click', ()=>{
+    editing = {type: state.tab, id: null};
+    openModal('Добавить');
+  });
+
+  // Export / Import
+  $('#exportBtn').addEventListener('click', ()=>{
+    const blob = new Blob([JSON.stringify(state)], {type:'application/json'});
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'ollys_dream_backup.json';
+    a.click(); URL.revokeObjectURL(a.href);
+  });
+  $('#importInput').addEventListener('change', async (e)=>{
+    const file = e.target.files[0]; if(!file) return;
+    const text = await file.text();
+    try{
+      const obj = JSON.parse(text);
+      if(obj && obj.items){ state = obj; save(); render(); setTab(state.tab||'fabrics'); }
+    }catch(err){ alert('Не удалось импортировать файл'); }
+    e.target.value='';
+  });
+
+  // Backdrop close on outside tap
+  $('#backdrop').addEventListener('click', (e)=>{
+    if(e.target.id==='backdrop'){ closeModal(); }
+  });
+  // Cancel button
+  $('#cancelBtn').addEventListener('click', (e)=>{ e.preventDefault(); closeModal(); }, {passive:false});
+
+  // Photo preview
+  $('#field-photo').addEventListener('change', async (e)=>{
+    const f = e.target.files[0];
+    if(!f){ $('#photoPreview').classList.add('hidden'); return; }
+    const data = await fileToDataURL(f);
+    $('#photoPreview').src = data;
+    $('#photoPreview').classList.remove('hidden');
+  });
+  $('#openPhoto').addEventListener('click', ()=>{
+    const src = $('#photoPreview').src;
+    if(!src) return;
+    const w = window.open('about:blank','_blank');
+    w.document.write(`<img src="${src}" style="width:100%;height:auto">`);
+  });
+
+  $('#field-file').addEventListener('change', (e)=>{
+    const f = e.target.files[0];
+    $('#fileInfo').textContent = f ? (f.name + (f.type?` (${f.type.split('/').pop().toUpperCase()})`:'')) : '';
+  });
+
+  // Save (submit)
+  $('#modalForm').addEventListener('submit', async (e)=>{
+    e.preventDefault();
+    const name = $('#field-name').value.trim();
+    const note = $('#field-note').value.trim();
+    const qtyRaw = $('#field-qty').value.trim();
+    const photoFile = $('#field-photo').files[0];
+    const file = $('#field-file').files[0];
+
+    let photoData = null;
+    if(photoFile){ photoData = await fileToDataURL(photoFile); }
+
+    let fileData = null, fileName = null, fileType = null;
+    if(file){ fileData = await fileToDataURL(file); fileName = file.name; fileType = file.type; }
+
+    const type = editing.type;
+    if(editing.id){
+      const idx = state.items[type].findIndex(x=>x.id===editing.id);
+      if(idx>-1){
+        const prev = state.items[type][idx];
+        state.items[type][idx] = {
+          ...prev,
+          name, note,
+          qty: type==='fabrics' ? qtyRaw : undefined,
+          photo: photoData || prev.photo || null,
+          file: fileData || prev.file || null,
+          fileName: fileName || prev.fileName || null,
+          fileType: fileType || prev.fileType || null,
+        };
+      }
+    } else {
+      const obj = {
+        id: uid(), name, note,
+        qty: type==='fabrics' ? qtyRaw : undefined,
+        photo: photoData, file: fileData, fileName, fileType
+      };
+      state.items[type].unshift(obj);
+    }
+    save(); render(); closeModal();
+  });
+
+  // Restore UI
+  setTab(state.tab || 'fabrics');
+})();
 </script>
 </body>
 </html>
