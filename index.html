@@ -1,105 +1,47 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ru">
 <head>
-<meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Olly’s Dream</title>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Olly’s Dream">
+<link rel="apple-touch-icon" href="icon-needle-heart.png">
 <style>
-body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-  margin: 0;
-  background: #fde7ee;
-  color: #333;
-}
-.wrap { max-width: 900px; margin: auto; padding: 20px; }
-h1 { font-size: 28px; margin-bottom: 5px; }
-.sub { color: #666; margin-bottom: 20px; }
-.btn {
-  background: #fff; border: none; border-radius: 10px; padding: 10px 16px; font-weight: 600;
-  box-shadow: 0 3px 8px rgba(0,0,0,0.1); cursor: pointer;
-}
-.btn.primary { background: #ff6ea2; color: #fff; }
-.tabs { display: flex; gap: 10px; margin-bottom: 10px; }
-.tab { background: #fff; padding: 10px 20px; border-radius: 999px; font-weight: 700; cursor: pointer; }
-.tab.active { background: #ff6ea2; color: white; }
-.list { display: grid; gap: 10px; }
-.card {
-  background: white; border-radius: 15px; padding: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-  display: flex; align-items: center; justify-content: space-between;
-}
-.name { font-size: 18px; font-weight: 700; cursor: pointer; }
-.thumb { width: 80px; height: 80px; border-radius: 12px; overflow: hidden; background: #f5f5f5; flex-shrink: 0; display: flex; align-items: center; justify-content: center; cursor: pointer; }
-.thumb img { width: 100%; height: 100%; object-fit: cover; }
-.modal-back {
-  position: fixed; inset: 0; background: rgba(0,0,0,0.4); display: none;
-  align-items: center; justify-content: center; z-index: 100;
-}
-.modal {
-  background: white; border-radius: 15px; width: 95%; max-width: 600px;
-  display: flex; flex-direction: column; max-height: 90vh; overflow: hidden;
-}
-.modal-header {
-  flex-shrink: 0; padding: 10px 16px; font-weight: 700; font-size: 18px;
-  border-bottom: 1px solid #eee; position: sticky; top: 0; background: white;
-}
-.modal-body {
-  overflow-y: auto; -webkit-overflow-scrolling: touch; padding: 16px;
-  flex: 1 1 auto; max-height: calc(90vh - 100px);
-}
-.modal-footer {
-  flex-shrink: 0; display: flex; justify-content: flex-end; gap: 10px;
-  padding: 10px 16px; border-top: 1px solid #eee; background: white;
-  position: sticky; bottom: 0;
-}
-.modal-open, html.modal-open { position: fixed; overflow: hidden; width: 100%; }
+body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Inter,Arial,sans-serif;background:#fff5f8;color:#2d2d2d}
+header{padding:20px;text-align:center}
+h1{font-size:28px;margin-bottom:4px}
+.subtitle{color:#9a8b90;font-size:14px;margin:0}
+.nav{display:flex;justify-content:center;gap:10px;margin:14px 0}
+.tabbtn{border:none;padding:10px 16px;border-radius:20px;background:#ffe1ec;color:#7a5360;font-weight:500}
+.tabbtn.active{background:#ffb6c1;color:#fff}
+.card{background:#fff;border-radius:16px;box-shadow:0 1px 4px rgba(0,0,0,0.1);padding:12px;margin:10px}
+button.btn{border:none;padding:8px 14px;border-radius:16px;background:#ffb6c1;color:white;font-weight:500;margin-right:8px}
+input,textarea,select{width:100%;border:1px solid #f4c3cf;border-radius:12px;padding:8px;margin-top:4px;margin-bottom:8px}
+.grid{display:grid;gap:10px}
+.hidden{display:none}
 </style>
 </head>
 <body>
-<div class="wrap">
+<header>
+  <img src="icon-needle-heart.png" alt="logo" width="60" height="60" style="border-radius:50%;margin-bottom:6px">
   <h1>Olly’s Dream</h1>
-  <div class="sub">Ткани • Выкройки • Готовые изделия</div>
-  <div class="tabs">
-    <div class="tab active">Ткани</div>
-    <div class="tab">Выкройки</div>
-    <div class="tab">Изделия</div>
-  </div>
-  <div class="list">
-    <div class="card">
-      <div class="thumb"><img src="https://via.placeholder.com/80" alt=""></div>
-      <div class="name">Кулирка</div>
-      <button class="btn">Изменить</button>
-    </div>
-  </div>
+  <p class="subtitle">Швейный дневник с любовью 💖</p>
+</header>
+<div class="nav">
+  <button class="tabbtn active" id="tab1">Ткани</button>
+  <button class="tabbtn" id="tab2">Выкройки</button>
+  <button class="tabbtn" id="tab3">Изделия</button>
 </div>
-
-<div class="modal-back" id="modalBack">
-  <div class="modal">
-    <div class="modal-header">Добавить ткань</div>
-    <div class="modal-body">
-      <p><label>Название</label><br><input type="text" style="width:100%;padding:10px;border-radius:10px;border:1px solid #ccc;"></p>
-      <p><label>Количество (м)</label><br><input type="number" style="width:100%;padding:10px;border-radius:10px;border:1px solid #ccc;"></p>
-      <p><label>Описание</label><br><textarea style="width:100%;padding:10px;border-radius:10px;border:1px solid #ccc;min-height:80px;"></textarea></p>
-      <p><label>Фото</label><br><input type="file" accept="image/*"></p>
-      <p><label>Файл (PDF или изображение)</label><br><input type="file" accept="application/pdf,image/*"></p>
-      <p><label>Ссылки</label><br><select multiple style="width:100%;padding:10px;border-radius:10px;border:1px solid #ccc;"></select></p>
-    </div>
-    <div class="modal-footer">
-      <button class="btn">Отмена</button>
-      <button class="btn primary">Сохранить</button>
-    </div>
-  </div>
+<div id="content" class="grid" style="padding:0 14px">
+  <div class="card">Добро пожаловать в твою обновлённую версию Olly’s Dream 💗<br>Чтобы добавить на экран iPhone: нажми <b>Поделиться → Добавить на экран домой</b>.</div>
 </div>
-
 <script>
-document.querySelectorAll('.btn').forEach(b => b.addEventListener('click', () => {
-  document.getElementById('modalBack').style.display = 'flex';
-  document.documentElement.classList.add('modal-open');
-}));
-document.getElementById('modalBack').addEventListener('click', e => {
-  if (e.target.id === 'modalBack') {
-    document.getElementById('modalBack').style.display = 'none';
-    document.documentElement.classList.remove('modal-open');
-  }
+document.querySelectorAll('.tabbtn').forEach(b=>b.onclick=()=>{
+  document.querySelectorAll('.tabbtn').forEach(x=>x.classList.remove('active'));
+  b.classList.add('active');
+  document.getElementById('content').innerHTML='<div class="card">Раздел '+b.textContent+' в разработке 💕</div>';
 });
 </script>
 </body>
