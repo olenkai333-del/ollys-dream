@@ -13,6 +13,7 @@
     --rose:#ff6aa2;
     --rose-2:#ffd6e6;
     --rose-3:#ffeaf3;
+    --danger:#e74c3c;
     --br:16px;
   }
   *{box-sizing:border-box}
@@ -23,10 +24,11 @@
   .brand{font-size:34px;font-weight:800;letter-spacing:.3px}
   .pill{display:inline-flex;align-items:center;gap:10px;background:var(--card);border:1px solid #eee;border-radius:999px;padding:10px 14px;box-shadow:0 1px 0 rgba(0,0,0,.04)}
   .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
-  .btn{background:var(--card);border:1px solid #e9e1e5;border-radius:999px;padding:10px 16px;font-weight:600}
+  .btn{background:var(--card);border:1px solid #e9e1e5;border-radius:999px;padding:10px 16px;font-weight:600;cursor:pointer}
   .btn.primary{background:var(--rose);border-color:var(--rose);color:white}
+  .btn.danger{border-color:var(--danger);color:var(--danger);background:#fff}
   .tabs{display:flex;gap:10px;margin:8px 0 12px;flex-wrap:wrap}
-  .tabbtn{background:var(--rose-3);border:1px solid var(--rose-2);border-radius:999px;padding:10px 16px;font-weight:700}
+  .tabbtn{background:var(--rose-3);border:1px solid var(--rose-2);border-radius:999px;padding:10px 16px;font-weight:700;cursor:pointer}
   .tabbtn.active{background:var(--rose);border-color:var(--rose);color:white}
   .search{width:100%;padding:12px 14px;border-radius:12px;border:1px solid #eadfe5;background:white}
   .stats{display:flex;gap:10px;margin:10px 0 16px;flex-wrap:wrap}
@@ -35,21 +37,23 @@
   .hint{color:var(--muted);font-size:14px}
   .card{background:var(--card);border:1px solid #eee;border-radius:var(--br);padding:12px}
   .list{display:grid;gap:10px}
-  .fab-item{display:grid;grid-template-columns:1fr auto;gap:6px;padding:12px;border-radius:12px;border:1px solid #eee;background:white}
+  .fab-item{display:grid;grid-template-columns:auto 1fr auto;gap:12px;padding:12px;border-radius:12px;border:1px solid #eee;background:white;align-items:center}
   .fab-item small{color:var(--muted)}
-  .totals{font-weight:700}
-  footer{position:fixed;inset:auto 0 0 0;background:linear-gradient(transparent, rgba(255,255,255,.85) 30%, rgba(255,255,255,.98));padding:12px 16px}
-  footer .inner{max-width:940px;margin:0 auto;display:flex;gap:8px;align-items:center;flex-wrap:wrap;justify-content:space-between}
+  .thumb{width:72px;height:72px;border:1px solid #eee;border-radius:12px;overflow:hidden;background:#fff;display:grid;place-items:center;color:#bbb}
+  .thumb img{width:100%;height:100%;object-fit:cover}
+  .badge{display:inline-block;background:white;border:1px solid #eadfe5;border-radius:999px;padding:2px 8px;margin-left:6px;font-size:12px;color:#433b46}
   /* Modal */
   .modal-back{position:fixed;inset:0;background:rgba(0,0,0,.35);display:none;align-items:flex-end;}
   .modal{background:white;border-radius:16px 16px 0 0;padding:16px 16px 20px;width:100%;max-width:940px;margin:0 auto;}
   .modal h3{margin:0 0 12px}
   .grid{display:grid;gap:10px}
+  .grid-2{grid-template-columns:1fr 1fr}
   label{font-size:13px;color:#584f5c}
   input,select,textarea{width:100%;padding:12px;border:1px solid #e6dbe2;border-radius:12px}
-  .modal-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:6px}
+  .modal-actions{display:flex;gap:8px;justify-content:space-between;margin-top:10px;align-items:center}
   .hide{display:none!important}
-  a.link{color:#0b7dda;text-decoration:none}
+  .preview{display:flex;gap:10px;align-items:center}
+  .preview .thumb{width:86px;height:86px}
 </style>
 </head>
 <body>
@@ -73,7 +77,7 @@
     <input id="search" class="search" placeholder="Поиск по названию, типу, тегам…" />
 
     <div class="stats">
-      <div class="chip totals">Всего: <span id="totalMeters">0</span> м</div>
+      <div class="chip">Всего: <span id="totalMeters">0</span> м</div>
       <div class="chip">Списано: <span id="writtenOff">0</span> м</div>
       <div class="right">
         <button id="addFabricBtn" class="btn primary">+ Добавить ткань</button>
@@ -85,11 +89,11 @@
     <p class="hint">Данные сохраняются в браузере (localStorage). Для резервной копии — используйте «Экспорт JSON».</p>
   </div>
 
-  <!-- Modal Add Fabric -->
+  <!-- Modal Add/Edit Fabric -->
   <div class="modal-back" id="modalBack">
     <div class="modal">
-      <h3>Добавить ткань</h3>
-      <div class="grid">
+      <h3 id="modalTitle">Добавить ткань</h3>
+      <div class="grid grid-2">
         <div>
           <label>Название</label>
           <input id="fName" placeholder="Напр.: Сатин розовый" />
@@ -113,24 +117,36 @@
           <label>Теги (через запятую)</label>
           <input id="fTags" placeholder="розовый, детское, 150см" />
         </div>
-        <div>
+        <div class="grid" style="grid-column:1 / -1">
           <label>Заметка</label>
           <textarea id="fNote" rows="2" placeholder="Особенности, где хранится и т. п."></textarea>
         </div>
+        <div class="grid" style="grid-column:1 / -1">
+          <label>Фото ткани (необязательно)</label>
+          <div class="preview">
+            <div class="thumb" id="photoPreview">Нет фото</div>
+            <input id="fPhoto" type="file" accept="image/*" />
+          </div>
+        </div>
       </div>
       <div class="modal-actions">
-        <button id="cancelModal" class="btn">Отмена</button>
-        <button id="saveFabric" class="btn primary">Сохранить</button>
+        <button id="deleteFabric" class="btn danger hide">Удалить ткань</button>
+        <div class="row" style="gap:8px;margin-left:auto">
+          <button id="cancelModal" class="btn">Отмена</button>
+          <button id="saveFabric" class="btn primary">Сохранить</button>
+        </div>
       </div>
     </div>
   </div>
 
 <script>
 (function(){
-  const LS_KEY = 'od_fabrics_v1';
+  const LS_KEY = 'od_fabrics_v2';
 
+  /** @type {Array<{id:string,name:string,type:string,meters:number,tags:string[],note:string,photo?:string,writtenOff:number,created:number}>} */
   let fabrics = [];
 
+  // --- Storage helpers
   const load = () => {
     try{
       const raw = localStorage.getItem(LS_KEY);
@@ -139,47 +155,134 @@
   };
   const save = () => localStorage.setItem(LS_KEY, JSON.stringify(fabrics));
 
+  // --- UI elements
   const content = document.getElementById('content');
   const totalMetersEl = document.getElementById('totalMeters');
   const writtenOffEl = document.getElementById('writtenOff');
   const search = document.getElementById('search');
   const modalBack = document.getElementById('modalBack');
   const addBtn = document.getElementById('addFabricBtn');
+  const modalTitle = document.getElementById('modalTitle');
+  const deleteBtn = document.getElementById('deleteFabric');
 
-  const openModal = () => { modalBack.style.display = 'flex'; };
+  // Form fields
+  const fName = document.getElementById('fName');
+  const fType = document.getElementById('fType');
+  const fMeters = document.getElementById('fMeters');
+  const fTags = document.getElementById('fTags');
+  const fNote = document.getElementById('fNote');
+  const fPhotoInp = document.getElementById('fPhoto');
+  const photoPreview = document.getElementById('photoPreview');
+
+  let editingId = null; // null => add, string => edit
+
+  // Modal controls
+  const openModal = (mode, item) => {
+    editingId = mode === 'edit' ? item.id : null;
+    modalTitle.textContent = mode === 'edit' ? 'Изменить ткань' : 'Добавить ткань';
+    deleteBtn.classList.toggle('hide', mode !== 'edit');
+
+    if(mode === 'edit'){
+      fName.value = item.name || '';
+      fType.value = item.type || 'хб';
+      fMeters.value = (item.meters ?? '').toString();
+      fTags.value = (item.tags || []).join(', ');
+      fNote.value = item.note || '';
+      if(item.photo){
+        const img = document.createElement('img');
+        img.src = item.photo;
+        photoPreview.innerHTML = '';
+        photoPreview.appendChild(img);
+      } else {
+        photoPreview.textContent = 'Нет фото';
+      }
+    } else {
+      clearModal();
+    }
+
+    modalBack.style.display = 'flex';
+  };
   const closeModal = () => { modalBack.style.display = 'none'; clearModal(); };
+
   document.getElementById('cancelModal').onclick = closeModal;
-  addBtn.onclick = openModal;
+  addBtn.onclick = () => openModal('add');
 
   function clearModal(){
-    document.getElementById('fName').value = '';
-    document.getElementById('fType').value = 'хб';
-    document.getElementById('fMeters').value = '';
-    document.getElementById('fTags').value = '';
-    document.getElementById('fNote').value = '';
+    fName.value = '';
+    fType.value = 'хб';
+    fMeters.value = '';
+    fTags.value = '';
+    fNote.value = '';
+    fPhotoInp.value = '';
+    photoPreview.textContent = 'Нет фото';
   }
 
+  // File to DataURL
+  function fileToDataURL(file){
+    return new Promise((res, rej)=>{
+      const r = new FileReader(); r.onload=()=>res(r.result); r.onerror=rej; r.readAsDataURL(file);
+    });
+  }
+  let tempPhotoData = null;
+  fPhotoInp.addEventListener('change', async (e)=>{
+    const file = e.target.files?.[0];
+    if(!file){ tempPhotoData = null; photoPreview.textContent='Нет фото'; return; }
+    const data = await fileToDataURL(file);
+    tempPhotoData = data;
+    const img = document.createElement('img');
+    img.src = data;
+    photoPreview.innerHTML = '';
+    photoPreview.appendChild(img);
+  });
+
+  // Save (add or edit)
   document.getElementById('saveFabric').onclick = () => {
-    const name = document.getElementById('fName').value.trim();
-    const type = document.getElementById('fType').value;
-    const meters = parseFloat(String(document.getElementById('fMeters').value).replace(',', '.'));
-    const tags = document.getElementById('fTags').value.split(',').map(s=>s.trim()).filter(Boolean);
-    const note = document.getElementById('fNote').value.trim();
+    const name = fName.value.trim();
+    const type = fType.value;
+    const meters = parseFloat(String(fMeters.value).replace(',', '.'));
+    const tags = fTags.value.split(',').map(s=>s.trim()).filter(Boolean);
+    const note = fNote.value.trim();
     if(!name){ alert('Введите название ткани.'); return; }
     if(!meters || meters <= 0){ alert('Введите количество метров (> 0).'); return; }
 
-    const item = {
-      id: 'fab_' + Date.now(),
-      name, type, meters, tags, note,
-      writtenOff: 0,
-      created: Date.now()
-    };
-    fabrics.unshift(item);
+    if(editingId){
+      const item = fabrics.find(x => x.id === editingId);
+      if(!item) return;
+      item.name = name;
+      item.type = type;
+      item.meters = meters;
+      item.tags = tags;
+      item.note = note;
+      if(tempPhotoData){ item.photo = tempPhotoData; }
+    } else {
+      const item = {
+        id: 'fab_' + Date.now(),
+        name, type, meters, tags, note,
+        photo: tempPhotoData || null,
+        writtenOff: 0,
+        created: Date.now()
+      };
+      fabrics.unshift(item);
+    }
+
+    tempPhotoData = null;
     save();
     closeModal();
     render();
   };
 
+  // Delete in modal (only in edit mode)
+  deleteBtn.onclick = () => {
+    if(!editingId) return;
+    if(confirm('Удалить эту ткань?')){
+      fabrics = fabrics.filter(x => x.id !== editingId);
+      save();
+      closeModal();
+      render();
+    }
+  };
+
+  // Render list + totals
   function render(){
     const q = (search.value||'').toLowerCase();
     let items = fabrics;
@@ -204,30 +307,30 @@
 
     content.innerHTML = items.map(it => `
       <div class="fab-item" data-id="${it.id}">
+        <div class="thumb">${it.photo ? `<img src="${it.photo}" alt="Фото ткани">` : 'Фото'}</div>
         <div>
           <strong>${escapeHtml(it.name)}</strong>
-          <div class="hint">${escapeHtml(it.type)} • ${fmtMeters(it.meters)} м ${it.tags?.length? '• ' + it.tags.map(escapeHtml).map(t=>`<span class="chip" style="margin-left:6px">${t}</span>`).join(' '):''}</div>
+          <div class="hint">${escapeHtml(it.type)} • ${fmtMeters(it.meters)} м ${it.tags?.length? it.tags.map(escapeHtml).map(t=>`<span class="badge">${t}</span>`).join(' '):''}</div>
           ${it.note ? `<small>${escapeHtml(it.note)}</small>`:''}
         </div>
-        <div class="row" style="align-self:center; gap:6px">
+        <div class="row" style="gap:6px; align-self:center">
           <button class="btn" data-action="writeoff" title="Списать 0.1 м">-0.1</button>
           <button class="btn" data-action="plus" title="Добавить 0.1 м">+0.1</button>
-          <button class="btn" data-action="delete" title="Удалить">Удалить</button>
+          <button class="btn" data-action="edit" title="Изменить">Изменить</button>
         </div>
       </div>
     `).join('');
 
+    // attach actions
     content.querySelectorAll('.fab-item .btn').forEach(btn => {
       btn.addEventListener('click', e => {
         const action = e.currentTarget.getAttribute('data-action');
         const id = e.currentTarget.closest('.fab-item').getAttribute('data-id');
         const item = fabrics.find(f => f.id === id);
         if(!item) return;
-        if(action === 'delete'){
-          if(confirm('Удалить ткань?')){
-            fabrics = fabrics.filter(f => f.id !== id);
-            save(); render();
-          }
+        if(action === 'edit'){
+          tempPhotoData = null; // reset temp
+          openModal('edit', item);
         }else if(action === 'writeoff'){
           item.meters = Math.max(0, +(item.meters - 0.1).toFixed(2));
           item.writtenOff = +(item.writtenOff + 0.1).toFixed(2);
@@ -243,8 +346,10 @@
   function fmtMeters(n){ return (n||0).toFixed(2).replace(/\.00$/,''); }
   function escapeHtml(s){ return String(s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
 
+  // Search
   search.addEventListener('input', render);
 
+  // Tabs (other tabs as stubs)
   document.querySelectorAll('.tabbtn').forEach(b=>{
     b.addEventListener('click', ()=>{
       document.querySelectorAll('.tabbtn').forEach(x=>x.classList.remove('active'));
@@ -260,6 +365,7 @@
     });
   });
 
+  // Export / Import
   document.getElementById('exportBtn').onclick = () => {
     const data = { fabrics };
     const blob = new Blob([JSON.stringify(data, null, 2)], {type:'application/json;charset=utf-8'});
@@ -290,9 +396,11 @@
     }
   });
 
+  // Init
   load();
   render();
 
+  // Close modal on backdrop click
   modalBack.addEventListener('click', (e)=>{
     if(e.target === modalBack) closeModal();
   });
