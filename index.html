@@ -1,143 +1,133 @@
 <!doctype html>
 <html lang="ru">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Olly's Dream — fallback</title>
-  <style>
-    :root{--bg:#ffe6ef;--card:#fff;--text:#2b2b2b;--muted:#777;--pink:#f7a4c0;}
-    *{box-sizing:border-box}
-    body{margin:0;font:16px/1.4 -apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Inter,Arial,sans-serif;background:var(--bg);color:var(--text)}
-    header{padding:24px 16px 8px;text-align:center}
-    h1{margin:0 0 6px;font-size:28px}
-    .tabs{display:flex;gap:12px;justify-content:center;padding:8px 16px 16px}
-    .tab{border:0;background:#ffd3e2;color:#333;padding:10px 18px;border-radius:999px;font-weight:600}
-    .tab.active{background:#ffb5cf}
-    .container{max-width:920px;margin:0 auto;padding:0 16px 52px}
-    .toolbar{display:flex;justify-content:space-between;align-items:center;margin:0 0 12px}
-    .btn{background:var(--pink);border:0;color:#fff;padding:10px 16px;border-radius:12px;font-weight:600}
-    .list{display:grid;gap:12px}
-    .card{background:var(--card);border-radius:16px;padding:14px 16px;box-shadow:0 6px 20px rgba(0,0,0,.06)}
-    .title{font-weight:800;font-size:18px;margin:0 0 4px}
-    .muted{color:var(--muted);font-size:14px}
-    .actions{margin-top:10px;display:flex;gap:8px}
-    dialog{border:0;border-radius:16px;padding:0;width:min(640px,92vw)}
-    .modal{padding:16px}
-    .row{margin:0 0 10px}
-    label{display:block;font-size:13px;color:#555;margin:0 0 4px}
-    input,textarea,select{width:100%;padding:10px 12px;border-radius:12px;border:1px solid #ddd;background:#fff}
-    textarea{min-height:90px;resize:vertical}
-    .modal .actions{justify-content:flex-end;padding:12px 16px 16px}
-    .ghost{background:#eee;color:#333}
-    footer{position:fixed;left:0;right:0;bottom:0;padding:6px 10px;text-align:center;color:#666;font-size:12px;background:linear-gradient(to top, rgba(0,0,0,.04), transparent)}
-  </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Olly's Dream — мини</title>
+<style>
+  :root { --bg:#ffd9e6; --card:#fff; --text:#2a2a2a; --pill:#f3a6be; --pill-active:#e26e99; }
+  html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif}
+  .wrap{max-width:880px;margin:0 auto;padding:24px 16px 64px}
+  h1{font-size:36px;margin:8px 0 6px;text-align:center}
+  .sub{opacity:.8;text-align:center;margin-bottom:18px}
+  .tabs{display:flex;gap:12px;justify-content:center;margin:10px 0 22px}
+  .tab{padding:10px 18px;border-radius:999px;background:var(--pill);cursor:pointer;user-select:none;font-weight:600;box-shadow:0 2px 0 rgba(0,0,0,.05)}
+  .tab.active{background:var(--pill-active);color:#fff}
+  .topbar{display:flex;justify-content:flex-end;margin-bottom:14px}
+  .btn{background:#ef85ab;color:#fff;border:0;border-radius:12px;padding:10px 14px;font-weight:700;cursor:pointer;box-shadow:0 4px 0 rgba(0,0,0,.08)}
+  .list{display:flex;flex-direction:column;gap:12px}
+  .card{background:var(--card);border-radius:16px;box-shadow:0 6px 20px rgba(0,0,0,.08);padding:14px 16px}
+  .muted{opacity:.6}
+  dialog{border:0;border-radius:16px;width:min(640px,92vw);padding:0;box-shadow:0 24px 60px rgba(0,0,0,.35)}
+  .dlg-head{padding:16px 18px;font-weight:800;border-bottom:1px solid #eee;background:#fff;border-radius:16px 16px 0 0}
+  .dlg-body{padding:16px 18px;background:#fff}
+  .f{display:flex;flex-direction:column;gap:10px}
+  .f input,.f textarea,.f select{width:100%;box-sizing:border-box;padding:10px 12px;border-radius:12px;border:1px solid #ddd}
+  .dlg-actions{display:flex;gap:10px;justify-content:flex-end;padding:14px 18px;background:#fafafa;border-top:1px solid #eee;border-radius:0 0 16px 16px}
+  .btn-sec{background:#eee;color:#333}
+  .hidden{display:none}
+  footer{position:fixed;bottom:10px;left:0;right:0;text-align:center;font-size:13px;opacity:.7}
+</style>
 </head>
 <body>
-<header>
-  <h1>Olly's Dream</h1>
-  <div class="muted">Ткани • Выкройки • Изделия — офлайн‑каталог</div>
-</header>
-
-<div class="tabs">
-  <button class="tab active" data-tab="fabrics">Ткани</button>
-  <button class="tab" data-tab="patterns">Выкройки</button>
-  <button class="tab" data-tab="products">Изделия</button>
-</div>
-
-<div class="container">
-  <div class="toolbar">
-    <div class="muted" id="counter"></div>
-    <button class="btn" id="addBtn">+ Добавить</button>
-  </div>
-  <div class="list" id="list"></div>
-</div>
-
-<dialog id="editDlg">
-  <form class="modal" method="dialog" id="form">
-    <div class="row"><label>Название<input name="title" required></label></div>
-    <div class="row"><label>Количество / метры<input name="qty" type="number" step="0.01"></label></div>
-    <div class="row"><label>Заметка<textarea name="note"></textarea></label></div>
-    <div class="actions">
-      <button class="btn ghost" value="cancel">Отмена</button>
-      <button class="btn" value="save">Сохранить</button>
+  <div class="wrap">
+    <h1>Olly's Dream</h1>
+    <div class="sub">Ткани • Выкройки • Изделия — офлайн‑каталог</div>
+    <div class="tabs" id="tabs">
+      <div class="tab active" data-tab="fabrics">Ткани</div>
+      <div class="tab" data-tab="patterns">Выкройки</div>
+      <div class="tab" data-tab="products">Изделия</div>
     </div>
-  </form>
-</dialog>
+    <div class="topbar"><button class="btn" id="addBtn">+ Добавить</button></div>
+    <div id="view-fabrics" class="list"></div>
+    <div id="view-patterns" class="list hidden"></div>
+    <div id="view-products" class="list hidden"></div>
+  </div>
 
-<footer>Fallback-версия без фото — для восстановления работоспособности. Фото вернём следующим обновлением.</footer>
+  <dialog id="dlg">
+    <form method="dialog" id="dlgForm">
+      <div class="dlg-head" id="dlgTitle">Добавить</div>
+      <div class="dlg-body">
+        <div class="f">
+          <input id="title" placeholder="Название" required>
+          <input id="qty" placeholder="Количество (м/шт)" inputmode="decimal">
+          <textarea id="note" placeholder="Описание / заметка" rows="4"></textarea>
+        </div>
+      </div>
+      <div class="dlg-actions">
+        <button class="btn btn-sec" value="cancel">Отмена</button>
+        <button class="btn" id="saveBtn" value="ok">Сохранить</button>
+      </div>
+    </form>
+  </dialog>
+
+  <footer>Мини‑версия без фото — для проверки вкладок и сохранения</footer>
 
 <script>
-const $ = s=>document.querySelector(s);
-const $$ = s=>Array.from(document.querySelectorAll(s));
+(() => {
+  const $ = s => document.querySelector(s);
+  const $$ = s => Array.from(document.querySelectorAll(s));
 
-const state = {
-  tab: 'fabrics',
-  data: JSON.parse(localStorage.getItem('od:data')||'{}')
-};
+  // state
+  const LS_KEY = 'od-mini-v1';
+  const state = load();
+  let currentTab = 'fabrics';
 
-function save(){ localStorage.setItem('od:data', JSON.stringify(state.data)); render(); }
-function ensure(){ if(!state.data[state.tab]) state.data[state.tab]=[]; }
-
-function renderTabs(){
-  $$('.tab').forEach(b=>{
-    b.classList.toggle('active', b.dataset.tab===state.tab);
-  });
-}
-function render(){
-  ensure();
-  $('#counter').textContent = 'Всего: ' + state.data[state.tab].length;
-  const list = $('#list'); list.innerHTML='';
-  state.data[state.tab].forEach((it, i)=>{
-    const card = document.createElement('div'); card.className='card';
-    card.innerHTML = \`
-      <div class="title">\${it.title||'Без названия'}</div>
-      <div class="muted">\${(it.note||'').trim()||'—'}</div>
-      <div class="actions">
-        <button class="btn ghost" data-edit="\${i}">Изменить</button>
-        <button class="btn ghost" data-del="\${i}">Удалить</button>
-      </div>\`;
-    list.appendChild(card);
-  });
-}
-
-$$('.tab').forEach(b=>b.addEventListener('click', e=>{
-  state.tab = b.dataset.tab;
-  renderTabs(); render();
-}));
-
-$('#addBtn').addEventListener('click', ()=>openEdit());
-$('#list').addEventListener('click', e=>{
-  const iEdit = e.target.dataset.edit, iDel = e.target.dataset.del;
-  if(iEdit!==undefined) openEdit(+iEdit);
-  if(iDel!==undefined){
-    ensure(); state.data[state.tab].splice(+iDel,1); save();
+  function load(){
+    try{
+      return JSON.parse(localStorage.getItem(LS_KEY)) || { fabrics:[], patterns:[], products:[] };
+    } catch(e){ return { fabrics:[], patterns:[], products:[] }; }
   }
-});
+  function save(){ localStorage.setItem(LS_KEY, JSON.stringify(state)); }
 
-const dlg = $('#editDlg'); const form = $('#form');
-function openEdit(index){
-  ensure();
-  dlg.returnValue='';
-  form.reset();
-  form.dataset.index = index==null?'-1':index;
-  if(index!=null){
-    const it = state.data[state.tab][index];
-    form.title.value = it.title||'';
-    form.qty.value = it.qty||'';
-    form.note.value = it.note||'';
+  // Tabs
+  function activate(tab){
+    currentTab = tab;
+    $$('.tab').forEach(t => t.classList.toggle('active', t.dataset.tab===tab));
+    ['fabrics','patterns','products'].forEach(name => {
+      $('#view-'+name).classList.toggle('hidden', name!==tab);
+    });
+    render();
   }
-  dlg.showModal();
-}
-form.addEventListener('close', ()=>{
-  if(dlg.returnValue==='save'){
-    const index = +form.dataset.index;
-    const it = {title: form.title.value.trim(), qty: form.qty.value, note: form.note.value};
-    if(index===-1){ state.data[state.tab].push(it); } else { state.data[state.tab][index]=it; }
+  $$('#tabs .tab').forEach(t => t.addEventListener('click', () => activate(t.dataset.tab)));
+
+  // Render lists
+  function cardHtml(x){
+    const qty = x.qty ? ` <span class="muted">• ${x.qty}</span>` : '';
+    const note = x.note ? `<div class="muted">${x.note}</div>` : '';
+    return `<div class="card"><div><strong>${escapeHtml(x.title||'Без названия')}</strong>${qty}</div>${note}</div>`;
+  }
+  function render(){
+    $('#view-fabrics').innerHTML = state.fabrics.map(cardHtml).join('') || `<div class="card muted">Пусто</div>`;
+    $('#view-patterns').innerHTML = state.patterns.map(cardHtml).join('') || `<div class="card muted">Пусто</div>`;
+    $('#view-products').innerHTML = state.products.map(cardHtml).join('') || `<div class="card muted">Пусто</div>`;
+  }
+  function escapeHtml(s){return (s||'').replace(/[&<>"]/g,c=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;' }[c]));}
+
+  // Add dialog
+  const dlg = $('#dlg');
+  const dlgForm = $('#dlgForm');
+  $('#addBtn').addEventListener('click', () => {
+    $('#dlgTitle').textContent = 'Добавить: ' + (currentTab==='fabrics'?'Ткань':currentTab==='patterns'?'Выкройку':'Изделие');
+    $('#title').value=''; $('#qty').value=''; $('#note').value='';
+    dlg.showModal();
+  });
+
+  dlg.addEventListener('close', () => {
+    if (dlg.returnValue !== 'ok') return; // cancelled
+    const item = { title: $('#title').value.trim(), qty: $('#qty').value.trim(), note: $('#note').value.trim(), id: Date.now() };
+    if (!item.title) return;
+    state[currentTab].unshift(item);
     save();
-  }
-});
+    render();
+  });
 
-renderTabs(); render();
+  // init
+  render();
+  activate('fabrics');
+  // expose helper to reset if needed
+  window.__od_reset = () => { localStorage.removeItem(LS_KEY); location.reload(); };
+})();
 </script>
 </body>
 </html>
