@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Olly’s Dream — швейный инвентарь</title>
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#ff9fba" />
+<link rel="apple-touch-icon" href="icon-192.png" />
+<style>
+:root{
+  --bg:#fff6f9; --fg:#2a2330; --muted:#8a7b84; --card:#ffffff; --border:#f2c7d4;
+  --primary:#ff9fba; --primary-ink:#6d3b4c; --chip:#ffe2ec;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Inter,Arial,sans-serif;background:var(--bg);color:var(--fg)}
+.container{max-width:980px;margin:0 auto;padding:16px}
+h1{font-size:28px;margin:0 0 4px}
+.subtitle{color:var(--muted);font-size:14px;margin:0 0 12px}
+.nav{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:10px 0 14px}
+.tabbtn{border:1px solid var(--border);padding:10px 12px;border-radius:16px;background:var(--card);cursor:pointer;color:var(--primary-ink)}
+.tabbtn.active{background:var(--primary);color:#fff;border-color:var(--primary)}
+.card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:12px}
+.row{display:flex;gap:12px;align-items:center}
+input[type="text"], input[type="number"], input[type="date"], select, textarea{width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:12px;background:#fff}
+textarea{min-height:80px}
+.btn{padding:9px 14px;border-radius:16px;border:1px solid var(--border);background:var(--card);cursor:pointer;color:var(--primary-ink)}
+.btn.primary{background:var(--primary);color:#fff;border-color:var(--primary)}
+.grid{display:grid;gap:12px}
+.grid-2{grid-template-columns:repeat(2,1fr)}
+.grid-3{grid-template-columns:repeat(3,1fr)}
+.badge{display:inline-block;background:var(--chip);border-radius:999px;padding:3px 10px;font-size:12px;margin-right:6px;color:var(--primary-ink);border:1px solid var(--border)}
+.small{font-size:12px;color:var(--muted)}
+.imgph{width:80px;height:80px;border:1px solid var(--border);border-radius:12px;display:grid;place-items:center;color:#aaa;overflow:hidden;background:#fff}
+.imgph img{width:100%;height:100%;object-fit:cover}
+.section{margin-top:18px}
+hr{border:none;border-top:1px solid var(--border);margin:12px 0}
+.actions{display:flex;gap:8px;flex-wrap:wrap}
+.hidden{display:none}
+.list{display:grid;gap:12px}
+.summary{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.header{display:flex;gap:12px;align-items:center;justify-content:space-between}
+.logo{display:flex;gap:10px;align-items:center}
+.logo .icon{width:38px;height:38px;border-radius:10px;background:var(--primary);display:grid;place-items:center;color:#fff;font-weight:800}
+.note{font-size:12px;color:var(--muted);margin-top:6px}
+</style>
+</head>
+<body>
+<div class="container">
+  <header class="header">
+    <div class="logo">
+      <div class="icon">♡</div>
+      <div>
+        <h1>Olly’s Dream</h1>
+        <p class="subtitle">Ткани • Выкройки • Готовые изделия — офлайн, с сохранением</p>
+      </div>
+    </div>
+    <div class="actions">
+      <button id="export-json" class="btn">Экспорт JSON</button>
+      <button id="import-json" class="btn">Импорт JSON</button>
+      <input id="import-file" type="file" accept="application/json" style="display:none">
+    </div>
+  </header>
+
+  <nav class="nav">
+    <button id="tab-fabrics" class="tabbtn active">Ткани</button>
+    <button id="tab-patterns" class="tabbtn">Выкройки</button>
+    <button id="tab-finished" class="tabbtn">Готовые изделия</button>
+  </nav>
+
+  <section id="view-fabrics">
+    <div class="row">
+      <input id="q-fabrics" type="text" placeholder="Поиск по названию, типу, тегам…" />
+      <button id="add-fabric" class="btn primary">+ Добавить ткань</button>
+    </div>
+    <div class="summary section">
+      <span class="badge" id="sum-total">Всего: 0 м</span>
+      <span class="badge" id="sum-used">Списано: 0 м</span>
+    </div>
+    <div id="list-fabrics" class="list section"></div>
+  </section>
+
+  <section id="view-patterns" class="hidden">
+    <div class="row">
+      <input id="q-patterns" type="text" placeholder="Поиск по названию, бренду, категории…" />
+      <button id="add-pattern" class="btn primary">+ Добавить выкройку</button>
+    </div>
+    <div id="list-patterns" class="list section"></div>
+  </section>
+
+  <section id="view-finished" class="hidden">
+    <div class="row">
+      <input id="q-finished" type="text" placeholder="Поиск по названию, получателю, ткани…" />
+      <button id="add-finished" class="btn primary">+ Добавить изделие</button>
+    </div>
+    <div id="list-finished" class="list section"></div>
+  </section>
+
+  <p class="note">Данные сохраняются в браузере (localStorage). Для резервной копии — используйте «Экспорт JSON».</p>
+</div>
+
+<!-- Modal -->
+<div id="modal" class="hidden" style="position:fixed;inset:0;background:rgba(0,0,0,.42);display:flex;align-items:flex-end;justify-content:center">
+  <div class="card" style="width:min(680px, 96vw);max-height:90vh;overflow:auto;border-radius:18px 18px 0 0">
+    <div class="row" style="justify-content:space-between;">
+      <h3 id="modal-title" style="margin:6px 0">Форма</h3>
+      <button class="btn" onclick="hideModal()">✕</button>
+    </div>
+    <div id="modal-body" class="grid section"></div>
+  </div>
+</div>
+
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js').catch(console.warn);
+  });
+}
+const K = { fabrics:'ollys-v3-fabrics', patterns:'ollys-v3-patterns', finished:'ollys-v3-finished' };
+const uid = () => Math.random().toString(36).slice(2,10);
+const read = (k) => { try { return JSON.parse(localStorage.getItem(k) || '[]'); } catch(e){ return []; } };
+const write = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch(e){} };
+let fabrics = read(K.fabrics), patterns = read(K.patterns), finished = read(K.finished);
+function saveAll(){ localStorage.setItem(K.fabrics, JSON.stringify(fabrics)); localStorage.setItem(K.patterns, JSON.stringify(patterns)); localStorage.setItem(K.finished, JSON.stringify(finished)); renderAll(); }
+const tabMap = {'tab-fabrics':'view-fabrics','tab-patterns':'view-patterns','tab-finished':'view-finished'};
+for (const id in tabMap){ document.getElementById(id).onclick=()=>{ for (const i in tabMap){ document.getElementById(i).classList.toggle('active', i===id); document.getElementById(tabMap[i]).classList.toggle('hidden', i!==id);} }; }
+function el(tag, attrs={}, children=[]){ const e=document.createElement(tag); for (const k in attrs){ if (k==='class') e.className=attrs[k]; else if (k==='html') e.innerHTML=attrs[k]; else e.setAttribute(k, attrs[k]); } (Array.isArray(children)?children:[children]).filter(Boolean).forEach(c=>e.appendChild(typeof c==='string'?document.createTextNode(c):c)); return e; }
+function fileToDataURL(file){ return new Promise((res,rej)=>{ const r=new FileReader(); r.onload=()=>res(r.result); r.onerror=rej; r.readAsDataURL(file); }); }
+function renderFabrics(){ const q=(document.getElementById('q-fabrics').value||'').toLowerCase(); const usageMap=new Map(); finished.forEach(f=>{ if (f.fabricId && f.usedLength) usageMap.set(f.fabricId,(usageMap.get(f.fabricId)||0)+Number(f.usedLength));}); const list=document.getElementById('list-fabrics'); list.innerHTML=''; const items=fabrics.filter(i=>(i.name+' '+i.type+' '+i.color+' '+i.tags+' '+i.location).toLowerCase().includes(q)); let total=0, usedTotal=0; items.forEach(i=>{ const used=usageMap.get(i.id)||0; const remain=(Number(i.length)||0)-used; total+=Number(i.length)||0; usedTotal+=used; const card=el('div',{class:'card'}); const top=el('div',{class:'row'}); const ph=el('div',{class:'imgph'},i.photo?[el('img',{src:i.photo})]:['Фото']); const head=el('div',{style:'flex:1'}); head.append( el('div',{class:'row',style:'justify-content:space-between;align-items:flex-start'},[ el('div',{},[el('strong',{},[i.name||'Без названия'])]), el('div',{class:'actions'},[ el('button',{class:'btn',onclick:()=>editFabric(i.id)},['Редакт.']), el('button',{class:'btn',onclick:()=>delFabric(i.id)},['Удалить']), ]) ]), el('div',{class:'small',style:'margin-top:4px'},[`Тип: ${i.type||'—'} · Цвет: ${i.color||'—'} · Ширина: ${i.width||'—'} см · Метраж: ${i.length||0} м · Остаток: ${remain.toFixed(2)} м`]), el('div',{class:'small'},[`Место: ${i.location||'—'}`]), el('div',{style:'margin-top:6px'},(i.tags||'').split(',').filter(Boolean).map(t=>el('span',{class:'badge'},[t.trim()]))), el('div',{class:'section'},[ el('div',{class:'small'},['История изделий:']), ...(finished.filter(f=>f.fabricId===i.id).map(f=>el('div',{class:'row',style:'justify-content:space-between'},[ el('div',{class:'small'},[`${f.date||''} — ${f.name||''}`]), el('span',{class:'badge'},[`-${Number(f.usedLength||0).toFixed(2)} м`]) ]))), finished.filter(f=>f.fabricId===i.id).length?null:el('div',{class:'small'},['Пока нет списаний']) ]) ); top.append(ph,head); card.append(top); list.append(card); }); document.getElementById('sum-total').textContent=`Всего: ${total.toFixed(2)} м`; document.getElementById('sum-used').textContent=`Списано: ${usedTotal.toFixed(2)} м`; if(!items.length){ list.append(el('div',{class:'small'},['Пока пусто. Добавь первую ткань →'])); } }
+function addFabric(){ const f={id:uid(), name:'', type:'', color:'', width:'150', length:1, location:'', tags:'', photo:'', notes:''}; openFabricForm('Новая ткань', f, (val)=>{ fabrics=[val,...fabrics]; saveAll(); }); }
+function editFabric(id){ const f=fabrics.find(x=>x.id===id); if(!f) return; openFabricForm('Редактировать ткань', {...f}, (val)=>{ fabrics=fabrics.map(x=>x.id===val.id?val:x); saveAll(); }); }
+function delFabric(id){ if(!confirm('Удалить ткань?')) return; fabrics=fabrics.filter(x=>x.id!==id); saveAll(); }
+async function openFabricForm(title,obj,onSave){ showModal(title, el('div',{},[ inputL('Название/принт','text',obj.name,(v)=>obj.name=v), el('div',{class:'grid grid-2'},[ inputL('Тип','text',obj.type,(v)=>obj.type=v), inputL('Цвет','text',obj.color,(v)=>obj.color=v), ]), el('div',{class:'grid grid-2'},[ inputL('Ширина (см)','text',obj.width,(v)=>obj.width=v), inputL('Метраж (м)','number',obj.length,(v)=>obj.length=parseFloat(v||'0')), ]), inputL('Где хранится','text',obj.location,(v)=>obj.location=v), inputL('Теги (через запятую)','text',obj.tags,(v)=>obj.tags=v), fileL('Фото (JPEG/PNG)','image/*', async (file)=>{ if(file){ obj.photo=await fileToDataURL(file);} }, obj.photo), textAreaL('Заметки', obj.notes,(v)=>obj.notes=v), el('div',{class:'actions',style:'justify-content:flex-end'},[ btn('Отмена', hideModal), btn('Сохранить', ()=>{ onSave(obj); hideModal(); }, 'primary') ]) ])); }
+function renderPatterns(){ const q=(document.getElementById('q-patterns').value||'').toLowerCase(); const list=document.getElementById('list-patterns'); list.innerHTML=''; const items=patterns.filter(i=>(i.name+' '+i.brand+' '+i.category+' '+i.tags+' '+i.sizes).toLowerCase().includes(q)); items.forEach(i=>{ const card=el('div',{class:'card'}); card.append( el('div',{class:'row',style:'justify-content:space-between;align-items:flex-start'},[ el('div',{},[ el('strong',{},[i.name||'Без названия']), el('div',{class:'small',style:'margin-top:4px'},[`Бренд: ${i.brand||'—'} · Категория: ${i.category||'—'} · Размеры: ${i.sizes||'—'} · Формат: ${i.format||'—'}`]), el('div',{},(i.tags||'').split(',').filter(Boolean).map(t=>el('span',{class:'badge'},[t.trim()]))), i.link?el('div',{class:'small',style:'margin-top:6px'},[el('a',{href:i.link,target:'_blank'},['Ссылка на выкройку'])]):null, i.fileDataURL?el('div',{class:'small',style:'margin-top:6px'},[el('a',{href:i.fileDataURL,download:i.fileName||'pattern'},[`Скачать: ${i.fileName||'pattern'}`])]):null, i.notes?el('div',{class:'small',style:'margin-top:6px'},[i.notes]):null, ]), el('div',{class:'actions'},[ btn('Редакт.', ()=>editPattern(i.id)), btn('Удалить', ()=>delPattern(i.id)) ]) ]) ); list.append(card); }); if(!items.length){ list.append(el('div',{class:'small'},['Пока пусто. Добавь первую выкройку →'])); } }
+function addPattern(){ const p={id:uid(), name:'', brand:'', category:'', sizes:'', format:'PDF', tags:'', link:'', fileName:'', fileDataURL:'', notes:''}; openPatternForm('Новая выкройка', p, (val)=>{ patterns=[val,...patterns]; saveAll(); }); }
+function editPattern(id){ const p=patterns.find(x=>x.id===id); if(!p) return; openPatternForm('Редактировать выкройку', {...p}, (val)=>{ patterns=patterns.map(x=>x.id===val.id?val:x); saveAll(); }); }
+function delPattern(id){ if(!confirm('Удалить выкройку?')) return; patterns=patterns.filter(x=>x.id!==id); saveAll(); }
+function openPatternForm(title,obj,onSave){ showModal(title, el('div',{},[ inputL('Название/код','text',obj.name,(v)=>obj.name=v), el('div',{class:'grid grid-2'},[ inputL('Бренд/дизайнер','text',obj.brand,(v)=>obj.brand=v), inputL('Категория','text',obj.category,(v)=>obj.category=v), ]), el('div',{class:'grid grid-2'},[ inputL('Размеры','text',obj.sizes,(v)=>obj.sizes=v), inputL('Формат (PDF/бумажная)','text',obj.format,(v)=>obj.format=v), ]), inputL('Теги (через запятую)','text',obj.tags,(v)=>obj.tags=v), inputL('Ссылка (если есть)','text',obj.link,(v)=>obj.link=v), fileL('Файл выкройки (PDF/JPG/PNG)','application/pdf,image/*', async (file)=>{ if(file){ obj.fileName=file.name; obj.fileDataURL=await fileToDataURL(file);} }), textAreaL('Заметки', obj.notes,(v)=>obj.notes=v), el('div',{class:'actions',style:'justify-content:flex-end'},[ btn('Отмена', hideModal), btn('Сохранить', ()=>{ onSave(obj); hideModal(); }, 'primary') ]) ])); }
+function renderFinished(){ const q=(document.getElementById('q-finished').value||'').toLowerCase(); const list=document.getElementById('list-finished'); list.innerHTML=''; const items=finished.filter(i=>(i.name+' '+i.category+' '+i.recipient+' '+i.tags+' '+(i.fabricId||'')).toLowerCase().includes(q)); items.forEach(i=>{ const card=el('div',{class:'card'}); const photos=(i.photoURLs||[]).slice(0,6).map(u=>el('a',{href:u,target:'_blank'},[el('div',{class:'imgph',style:'width:100%;height:90px'},[el('img',{src:u})]) ])); card.append( el('div',{class:'row',style:'justify-content:space-between;align-items:flex-start'},[ el('div',{style:'flex:1;min-width:0'},[ el('strong',{},[i.name||'Без названия']), el('div',{class:'small',style:'margin-top:4px'},[`Категория: ${i.category||'—'} · Дата: ${i.date||'—'} · Размер: ${i.size||'—'} · Кому: ${i.recipient||'—'}${i.fabricId?' · Ткань: '+(fabrics.find(f=>f.id===i.fabricId)?.name||'—'):''}${(typeof i.usedLength==='number')?' · Списано: '+Number(i.usedLength||0).toFixed(2)+' м':''}`]), el('div',{},(i.tags||'').split(',').filter(Boolean).map(t=>el('span',{class:'badge'},[t.trim()]))), i.notes?el('div',{class:'small',style:'margin-top:6px'},[i.notes]):null, photos.length?el('div',{class:'grid grid-3',style:'margin-top:8px'},photos):null ]), el('div',{class:'actions'},[ btn('Редакт.', ()=>editFinished(i.id)), btn('Удалить', ()=>delFinished(i.id)) ]) ]) ); list.append(card); }); if(!items.length){ list.append(el('div',{class:'small'},['Пока пусто. Добавь первое изделие →'])); } }
+function addFinished(){ const today=new Date().toISOString().slice(0,10); const f={id:uid(), name:'', category:'', date:today, size:'', recipient:'', fabricId:'', usedLength:0, tags:'', photoURLs:[], notes:''}; openFinishedForm('Новое изделие', f, (val)=>{ finished=[val,...finished]; saveAll(); }); }
+function editFinished(id){ const f=finished.find(x=>x.id===id); if(!f) return; openFinishedForm('Редактировать изделие', {...f}, (val)=>{ finished=finished.map(x=>x.id===val.id?val:x); saveAll(); }); }
+function delFinished(id){ if(!confirm('Удалить запись?')) return; finished=finished.filter(x=>x.id!==id); saveAll(); }
+function openFinishedForm(title,obj,onSave){ showModal(title, el('div',{},[ inputL('Название','text',obj.name,(v)=>obj.name=v), el('div',{class:'grid grid-2'},[ inputL('Категория','text',obj.category,(v)=>obj.category=v), inputL('Дата','date',obj.date,(v)=>obj.date=v), ]), el('div',{class:'grid grid-2'},[ inputL('Размер/рост','text',obj.size,(v)=>obj.size=v), inputL('Кому','text',obj.recipient',(v)=>obj.recipient=v), ]), selectL('Использованная ткань', fabrics, obj.fabricId||'', (v)=>obj.fabricId=v||''), inputL('Израсходовано (м)','number',obj.usedLength,(v)=>obj.usedLength=parseFloat(v||'0')), inputL('Теги (через запятую)','text',obj.tags,(v)=>obj.tags=v), fileMultiL('Фото изделия (можно несколько)','image/*', async (files)=>{ if(files&&files.length){ for (const ff of files){ obj.photoURLs.push(await fileToDataURL(ff)); } renderModalBody(); } }, obj.photoURLs), textAreaL('Заметки', obj.notes,(v)=>obj.notes=v), el('div',{class:'actions',style:'justify-content:flex-end'},[ btn('Отмена', hideModal), btn('Сохранить', ()=>{ onSave(obj); hideModal(); }, 'primary') ]) ])); function renderModalBody(){ const body=document.getElementById('modal-body'); body.innerHTML=''; body.append( inputL('Название','text',obj.name,(v)=>obj.name=v), el('div',{class:'grid grid-2'},[ inputL('Категория','text',obj.category,(v)=>obj.category=v), inputL('Дата','date',obj.date,(v)=>obj.date=v), ]), el('div',{class:'grid grid-2'},[ inputL('Размер/рост','text',obj.size,(v)=>obj.size=v), inputL('Кому','text',obj.recipient,(v)=>obj.recipient=v), ]), selectL('Использованная ткань', fabrics, obj.fabricId||'', (v)=>obj.fabricId=v||''), inputL('Израсходовано (м)','number',obj.usedLength,(v)=>obj.usedLength=parseFloat(v||'0')), inputL('Теги (через запятую)','text',obj.tags,(v)=>obj.tags=v), fileMultiL('Фото изделия (можно несколько)','image/*', async (files)=>{ if(files&&files.length){ for (const ff of files){ obj.photoURLs.push(await fileToDataURL(ff)); } renderModalBody(); } }, obj.photoURLs), textAreaL('Заметки', obj.notes,(v)=>obj.notes=v), el('div',{class:'actions',style:'justify-content:flex-end'},[ btn('Отмена', hideModal), btn('Сохранить', ()=>{ onSave(obj); hideModal(); }, 'primary') ]) ); } }
+function inputL(label,type,value,onInput){ const wrap=el('label',{},[ el('div',{class:'small'},[label]), el('input',{type, value: value==null?'':value}), ]); wrap.querySelector('input').oninput=(e)=>onInput(e.target.value); return wrap;}
+function textAreaL(label,value,onInput){ const wrap=el('label',{},[ el('div',{class:'small'},[label]), el('textarea',{},[]), ]); const ta=wrap.querySelector('textarea'); ta.value=value||''; ta.oninput=(e)=>onInput(e.target.value); return wrap;}
+function fileL(label,accept,onFile,previewUrl){ const inp=el('input',{type:'file',accept}); inp.onchange=async (e)=>{ const f=e.target.files[0]; if(f){ await onFile(f);} }; return el('label',{},[ el('div',{class:'small'},[label]), inp, previewUrl?el('div',{class:'imgph',style:'margin-top:6px'},[el('img',{src:previewUrl})]):null]); }
+function fileMultiL(label,accept,onFiles,previews){ const inp=el('input',{type:'file',accept,multiple:true}); inp.onchange=async (e)=>{ await onFiles(Array.from(e.target.files||[])); }; const grid=el('div',{class:'grid grid-3',style:'margin-top:6px'}, (previews||[]).map(u=>el('div',{class:'imgph',style:'width:100%;height:90px'},[el('img',{src:u})])) ); return el('div',{},[ el('div',{class:'small'},[label]), inp, grid ]); }
+function selectL(label,list,value,onChange){ const sel=el('select',{},[ el('option',{value:''},['— не выбрано —']), ...list.map(f=>el('option',{value:f.id},[f.name||('Ткань '+f.id)])) ]); sel.value=value; sel.onchange=(e)=>onChange(e.target.value); return el('label',{},[ el('div',{class:'small'},[label]), sel ]); }
+function btn(text,onclick,type){ const b=el('button',{class:'btn '+(type==='primary'?'primary':''),onclick},[text]); return b; }
+function showModal(title,bodyNode){ document.getElementById('modal-title').textContent=title; const body=document.getElementById('modal-body'); body.innerHTML=''; body.append(bodyNode); document.getElementById('modal').classList.remove('hidden'); }
+function hideModal(){ document.getElementById('modal').classList.add('hidden'); }
+document.getElementById('export-json').onclick=()=>{ const data={fabrics,patterns,finished,version:'v3'}; const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'}); const url=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download='ollys_dream_backup.json'; a.click(); URL.revokeObjectURL(url); };
+document.getElementById('import-json').onclick=()=>{ document.getElementById('import-file').click(); };
+document.getElementById('import-file').onchange=async (e)=>{ const f=e.target.files?.[0]; if(!f) return; const txt=await f.text(); try{ const obj=JSON.parse(txt); if(obj.fabrics&&obj.patterns&&obj.finished){ fabrics=obj.fabrics; patterns=obj.patterns; finished=obj.finished; saveAll(); alert('Импорт выполнен'); } else { alert('Файл не распознан'); } } catch { alert('Ошибка чтения файла'); } };
+document.getElementById('add-fabric').onclick=addFabric;
+document.getElementById('add-pattern').onclick=addPattern;
+document.getElementById('add-finished').onclick=addFinished;
+document.getElementById('q-fabrics').oninput=renderFabrics;
+document.getElementById('q-patterns').oninput=renderPatterns;
+document.getElementById('q-finished').oninput=renderFinished;
+function renderAll(){ renderFabrics(); renderPatterns(); renderFinished(); }
+renderAll();
+</script>
+</body>
+</html>
