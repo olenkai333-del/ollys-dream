@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Olly’s Dream • Ткани • Выкройки • Готовые изделия</title>
+<style>
+  :root{
+    --bg:#fff5f8;
+    --card:#ffffff;
+    --ink:#2b2431;
+    --muted:#6e6273;
+    --rose:#ff6aa2;
+    --rose-2:#ffd6e6;
+    --rose-3:#ffeaf3;
+    --br:16px;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;height:100%;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Roboto,Inter,system-ui,Arial;}
+  body{background:var(--bg);color:var(--ink);}
+  .wrap{max-width:940px;margin:0 auto;padding:20px 16px 120px;}
+  header{display:flex;align-items:center;gap:12px;flex-wrap:wrap; margin-bottom:12px;}
+  .brand{font-size:34px;font-weight:800;letter-spacing:.3px}
+  .pill{display:inline-flex;align-items:center;gap:10px;background:var(--card);border:1px solid #eee;border-radius:999px;padding:10px 14px;box-shadow:0 1px 0 rgba(0,0,0,.04)}
+  .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+  .btn{background:var(--card);border:1px solid #e9e1e5;border-radius:999px;padding:10px 16px;font-weight:600}
+  .btn.primary{background:var(--rose);border-color:var(--rose);color:white}
+  .tabs{display:flex;gap:10px;margin:8px 0 12px;flex-wrap:wrap}
+  .tabbtn{background:var(--rose-3);border:1px solid var(--rose-2);border-radius:999px;padding:10px 16px;font-weight:700}
+  .tabbtn.active{background:var(--rose);border-color:var(--rose);color:white}
+  .search{width:100%;padding:12px 14px;border-radius:12px;border:1px solid #eadfe5;background:white}
+  .stats{display:flex;gap:10px;margin:10px 0 16px;flex-wrap:wrap}
+  .chip{background:white;border:1px solid #eadfe5;border-radius:999px;padding:8px 12px;color:#433b46}
+  .right{margin-left:auto}
+  .hint{color:var(--muted);font-size:14px}
+  .card{background:var(--card);border:1px solid #eee;border-radius:var(--br);padding:12px}
+  .list{display:grid;gap:10px}
+  .fab-item{display:grid;grid-template-columns:1fr auto;gap:6px;padding:12px;border-radius:12px;border:1px solid #eee;background:white}
+  .fab-item small{color:var(--muted)}
+  .totals{font-weight:700}
+  footer{position:fixed;inset:auto 0 0 0;background:linear-gradient(transparent, rgba(255,255,255,.85) 30%, rgba(255,255,255,.98));padding:12px 16px}
+  footer .inner{max-width:940px;margin:0 auto;display:flex;gap:8px;align-items:center;flex-wrap:wrap;justify-content:space-between}
+  /* Modal */
+  .modal-back{position:fixed;inset:0;background:rgba(0,0,0,.35);display:none;align-items:flex-end;}
+  .modal{background:white;border-radius:16px 16px 0 0;padding:16px 16px 20px;width:100%;max-width:940px;margin:0 auto;}
+  .modal h3{margin:0 0 12px}
+  .grid{display:grid;gap:10px}
+  label{font-size:13px;color:#584f5c}
+  input,select,textarea{width:100%;padding:12px;border:1px solid #e6dbe2;border-radius:12px}
+  .modal-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:6px}
+  .hide{display:none!important}
+  a.link{color:#0b7dda;text-decoration:none}
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="brand">Olly’s Dream</div>
+      <div class="pill hint">Ткани • Выкройки • Готовые изделия — офлайн, с сохранением</div>
+      <div class="right row">
+        <button id="exportBtn" class="btn">Экспорт JSON</button>
+        <label class="btn" for="importInput" style="cursor:pointer">Импорт JSON</label>
+        <input id="importInput" type="file" accept="application/json" class="hide">
+      </div>
+    </header>
+
+    <div class="tabs">
+      <button class="tabbtn active" data-tab="fabrics">Ткани</button>
+      <button class="tabbtn" data-tab="patterns">Выкройки</button>
+      <button class="tabbtn" data-tab="products">Готовые изделия</button>
+    </div>
+
+    <input id="search" class="search" placeholder="Поиск по названию, типу, тегам…" />
+
+    <div class="stats">
+      <div class="chip totals">Всего: <span id="totalMeters">0</span> м</div>
+      <div class="chip">Списано: <span id="writtenOff">0</span> м</div>
+      <div class="right">
+        <button id="addFabricBtn" class="btn primary">+ Добавить ткань</button>
+      </div>
+    </div>
+
+    <div id="content" class="list"></div>
+
+    <p class="hint">Данные сохраняются в браузере (localStorage). Для резервной копии — используйте «Экспорт JSON».</p>
+  </div>
+
+  <!-- Modal Add Fabric -->
+  <div class="modal-back" id="modalBack">
+    <div class="modal">
+      <h3>Добавить ткань</h3>
+      <div class="grid">
+        <div>
+          <label>Название</label>
+          <input id="fName" placeholder="Напр.: Сатин розовый" />
+        </div>
+        <div>
+          <label>Тип</label>
+          <select id="fType">
+            <option value="хб">Хлопок</option>
+            <option value="сатин">Сатин</option>
+            <option value="лен">Лён</option>
+            <option value="шелк">Шёлк</option>
+            <option value="флис">Флис</option>
+            <option value="прочее">Прочее</option>
+          </select>
+        </div>
+        <div>
+          <label>Количество (метры)</label>
+          <input id="fMeters" type="number" min="0" step="0.1" placeholder="Напр.: 1.8" />
+        </div>
+        <div>
+          <label>Теги (через запятую)</label>
+          <input id="fTags" placeholder="розовый, детское, 150см" />
+        </div>
+        <div>
+          <label>Заметка</label>
+          <textarea id="fNote" rows="2" placeholder="Особенности, где хранится и т. п."></textarea>
+        </div>
+      </div>
+      <div class="modal-actions">
+        <button id="cancelModal" class="btn">Отмена</button>
+        <button id="saveFabric" class="btn primary">Сохранить</button>
+      </div>
+    </div>
+  </div>
+
+<script>
+(function(){
+  const LS_KEY = 'od_fabrics_v1';
+
+  let fabrics = [];
+
+  const load = () => {
+    try{
+      const raw = localStorage.getItem(LS_KEY);
+      fabrics = raw ? JSON.parse(raw) : [];
+    }catch(e){ fabrics = []; }
+  };
+  const save = () => localStorage.setItem(LS_KEY, JSON.stringify(fabrics));
+
+  const content = document.getElementById('content');
+  const totalMetersEl = document.getElementById('totalMeters');
+  const writtenOffEl = document.getElementById('writtenOff');
+  const search = document.getElementById('search');
+  const modalBack = document.getElementById('modalBack');
+  const addBtn = document.getElementById('addFabricBtn');
+
+  const openModal = () => { modalBack.style.display = 'flex'; };
+  const closeModal = () => { modalBack.style.display = 'none'; clearModal(); };
+  document.getElementById('cancelModal').onclick = closeModal;
+  addBtn.onclick = openModal;
+
+  function clearModal(){
+    document.getElementById('fName').value = '';
+    document.getElementById('fType').value = 'хб';
+    document.getElementById('fMeters').value = '';
+    document.getElementById('fTags').value = '';
+    document.getElementById('fNote').value = '';
+  }
+
+  document.getElementById('saveFabric').onclick = () => {
+    const name = document.getElementById('fName').value.trim();
+    const type = document.getElementById('fType').value;
+    const meters = parseFloat(String(document.getElementById('fMeters').value).replace(',', '.'));
+    const tags = document.getElementById('fTags').value.split(',').map(s=>s.trim()).filter(Boolean);
+    const note = document.getElementById('fNote').value.trim();
+    if(!name){ alert('Введите название ткани.'); return; }
+    if(!meters || meters <= 0){ alert('Введите количество метров (> 0).'); return; }
+
+    const item = {
+      id: 'fab_' + Date.now(),
+      name, type, meters, tags, note,
+      writtenOff: 0,
+      created: Date.now()
+    };
+    fabrics.unshift(item);
+    save();
+    closeModal();
+    render();
+  };
+
+  function render(){
+    const q = (search.value||'').toLowerCase();
+    let items = fabrics;
+    if(q){
+      items = items.filter(it => (
+        it.name.toLowerCase().includes(q) ||
+        it.type.toLowerCase().includes(q) ||
+        it.tags.join(' ').toLowerCase().includes(q) ||
+        (it.note||'').toLowerCase().includes(q)
+      ));
+    }
+
+    const total = fabrics.reduce((s, it)=> s + (it.meters||0), 0);
+    const written = fabrics.reduce((s, it)=> s + (it.writtenOff||0), 0);
+    totalMetersEl.textContent = total.toFixed(2).replace(/\.00$/, '');
+    writtenOffEl.textContent = written.toFixed(2).replace(/\.00$/, '');
+
+    if(items.length === 0){
+      content.innerHTML = '<div class="card hint">Список пуст. Нажми «+ Добавить ткань», чтобы внести первую запись.</div>';
+      return;
+    }
+
+    content.innerHTML = items.map(it => `
+      <div class="fab-item" data-id="${it.id}">
+        <div>
+          <strong>${escapeHtml(it.name)}</strong>
+          <div class="hint">${escapeHtml(it.type)} • ${fmtMeters(it.meters)} м ${it.tags?.length? '• ' + it.tags.map(escapeHtml).map(t=>`<span class="chip" style="margin-left:6px">${t}</span>`).join(' '):''}</div>
+          ${it.note ? `<small>${escapeHtml(it.note)}</small>`:''}
+        </div>
+        <div class="row" style="align-self:center; gap:6px">
+          <button class="btn" data-action="writeoff" title="Списать 0.1 м">-0.1</button>
+          <button class="btn" data-action="plus" title="Добавить 0.1 м">+0.1</button>
+          <button class="btn" data-action="delete" title="Удалить">Удалить</button>
+        </div>
+      </div>
+    `).join('');
+
+    content.querySelectorAll('.fab-item .btn').forEach(btn => {
+      btn.addEventListener('click', e => {
+        const action = e.currentTarget.getAttribute('data-action');
+        const id = e.currentTarget.closest('.fab-item').getAttribute('data-id');
+        const item = fabrics.find(f => f.id === id);
+        if(!item) return;
+        if(action === 'delete'){
+          if(confirm('Удалить ткань?')){
+            fabrics = fabrics.filter(f => f.id !== id);
+            save(); render();
+          }
+        }else if(action === 'writeoff'){
+          item.meters = Math.max(0, +(item.meters - 0.1).toFixed(2));
+          item.writtenOff = +(item.writtenOff + 0.1).toFixed(2);
+          save(); render();
+        }else if(action === 'plus'){
+          item.meters = +(item.meters + 0.1).toFixed(2);
+          save(); render();
+        }
+      });
+    });
+  }
+
+  function fmtMeters(n){ return (n||0).toFixed(2).replace(/\.00$/,''); }
+  function escapeHtml(s){ return String(s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
+
+  search.addEventListener('input', render);
+
+  document.querySelectorAll('.tabbtn').forEach(b=>{
+    b.addEventListener('click', ()=>{
+      document.querySelectorAll('.tabbtn').forEach(x=>x.classList.remove('active'));
+      b.classList.add('active');
+      const tab = b.dataset.tab;
+      if(tab === 'fabrics'){
+        document.getElementById('addFabricBtn').classList.remove('hide');
+        render();
+      }else{
+        document.getElementById('addFabricBtn').classList.add('hide');
+        content.innerHTML = '<div class="card hint">Раздел в разработке 💕</div>';
+      }
+    });
+  });
+
+  document.getElementById('exportBtn').onclick = () => {
+    const data = { fabrics };
+    const blob = new Blob([JSON.stringify(data, null, 2)], {type:'application/json;charset=utf-8'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'ollys_dream_backup.json';
+    document.body.appendChild(a);
+    a.click();
+    setTimeout(()=>{ URL.revokeObjectURL(url); a.remove(); }, 1000);
+  };
+
+  document.getElementById('importInput').addEventListener('change', async (e)=>{
+    const file = e.target.files[0];
+    if(!file) return;
+    try{
+      const text = await file.text();
+      const data = JSON.parse(text);
+      if(Array.isArray(data)) fabrics = data;
+      else if(data && Array.isArray(data.fabrics)) fabrics = data.fabrics;
+      else throw new Error('Неверный формат файла');
+      save(); render();
+      alert('Импорт завершён ✅');
+    }catch(err){
+      alert('Не удалось импортировать: ' + err.message);
+    }finally{
+      e.target.value = '';
+    }
+  });
+
+  load();
+  render();
+
+  modalBack.addEventListener('click', (e)=>{
+    if(e.target === modalBack) closeModal();
+  });
+})();
+</script>
+</body>
+</html>
