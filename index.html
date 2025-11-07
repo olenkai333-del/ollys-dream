@@ -1,432 +1,48 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Olly’s Dream — каталог тканей и выкроек</title>
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <style>
-    :root{
-      --bg:#fde7ee; --card:#fff; --ink:#2b1e25; --muted:#6b5a61;
-      --accent:#ff6ea2; --pill:#ffd6e6; --shadow:0 8px 22px rgba(0,0,0,.08);
-      --link:#2b5bbb; --chip-bg:#eef4ff; --chip-txt:#1b3a90;
-    }
-    *{box-sizing:border-box}
-    html,body{height:100%}
-    body{margin:0;font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Inter,Arial;
-         background:var(--bg);color:var(--ink);-webkit-tap-highlight-color: transparent;}
-    .wrap{max-width:980px;margin:0 auto;padding:22px 14px 80px}
-    h1{margin:0 0 6px;font-size:32px}
-    .sub{color:var(--muted);margin-bottom:12px}
-
-    /* Tabs */
-    .tabs{display:flex;gap:12px;align-items:center;margin:10px 0 14px;flex-wrap:wrap}
-    .tab{border:0;border-radius:999px;background:#fff;box-shadow:var(--shadow);
-         padding:12px 18px;font-weight:800;cursor:pointer}
-    .tab[aria-selected="true"]{background:var(--accent);color:#fff}
-    .spacer{flex:1 1 auto}
-    .btn{border:0;border-radius:12px;padding:10px 14px;font-weight:800;cursor:pointer;
-         background:#fff;box-shadow:var(--shadow)}
-    .btn.primary{background:var(--accent);color:#fff}
-
-    /* Lists */
-    .list{display:grid;grid-template-columns:1fr;gap:12px;margin-top:8px}
-    @media(min-width:720px){.list{grid-template-columns:1fr 1fr}}
-
-    .card{display:flex;gap:12px;align-items:center;background:#fff;border-radius:18px;
-          box-shadow:var(--shadow);padding:12px}
-    .thumb{width:90px;height:90px;flex:0 0 auto;border-radius:12px;overflow:hidden;
-           background:#f3f0f2;display:flex;align-items:center;justify-content:center;cursor:pointer}
-    .thumb img{width:100%;height:100%;object-fit:cover;display:block}
-    .title{font-size:20px;font-weight:900;margin:0 0 4px;cursor:pointer;text-decoration:underline 1px rgba(0,0,0,.1)}
-    .muted{color:var(--muted);font-size:14px}
-    .pill{margin-left:auto;background:var(--pill);padding:8px 12px;border-radius:999px;font-weight:900}
-    .links{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px}
-    .chip{background:var(--chip-bg);color:var(--chip-txt);border-radius:999px;padding:6px 10px;font-weight:800;cursor:pointer;}
-
-    /* Modal */
-    .backdrop{position:fixed;inset:0;background:rgba(0,0,0,.45);display:none;align-items:flex-end;justify-content:center;padding:10px;z-index:1000}
-    .backdrop[aria-hidden="false"]{display:flex}
-    .modal{background:#fff;width:100%;max-width:700px;border-top-left-radius:16px;border-top-right-radius:16px;
-           max-height:85vh;overflow:auto;-webkit-overflow-scrolling:touch;box-shadow:0 -8px 28px rgba(0,0,0,.25)}
-    .modal header{position:sticky;top:0;background:#fff;padding:12px 14px 8px;border-bottom:1px solid #f0e7eb;font-weight:900}
-    .modal .body{padding:14px}
-    .row{display:flex;flex-direction:column;gap:6px;margin-bottom:12px}
-    label{font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:900}
-    input[type="text"],input[type="number"],textarea,select{width:100%;padding:12px;border-radius:12px;border:1px solid #e8e0e4;font-size:16px;background:#fff}
-    select[multiple]{min-height:104px}
-    textarea{min-height:96px;resize:vertical}
-    .file-row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
-    .thumb-prev{width:120px;height:120px;border-radius:12px;background:#f3f0f2;display:flex;align-items:center;justify-content:center;overflow:hidden}
-    .thumb-prev img{width:100%;height:100%;object-fit:cover}
-    .actions{position:sticky;bottom:0;background:#fff;border-top:1px solid #f0e7eb;display:flex;gap:10px;justify-content:flex-end;padding:10px 14px}
-
-    .hidden{display:none !important}
-
-    /* Lightbox */
-    .lightbox{position:fixed;inset:0;background:rgba(0,0,0,.9);display:none;align-items:center;justify-content:center;z-index:1200}
-    .lightbox img{max-width:92vw;max-height:92vh;border-radius:12px}
-    .lightbox[aria-hidden="false"]{display:flex}
-  </style>
-
-  <!-- IndexedDB helper -->
-  <script src="https://cdn.jsdelivr.net/npm/idb-keyval@6/dist/idb-keyval.iife.min.js"></script>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Olly’s Dream</title>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Olly’s Dream">
+<link rel="apple-touch-icon" href="icon-needle-heart.png">
+<style>
+body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Inter,Arial,sans-serif;background:#fff5f8;color:#2d2d2d}
+header{padding:20px;text-align:center}
+h1{font-size:28px;margin-bottom:4px}
+.subtitle{color:#9a8b90;font-size:14px;margin:0}
+.nav{display:flex;justify-content:center;gap:10px;margin:14px 0}
+.tabbtn{border:none;padding:10px 16px;border-radius:20px;background:#ffe1ec;color:#7a5360;font-weight:500}
+.tabbtn.active{background:#ffb6c1;color:#fff}
+.card{background:#fff;border-radius:16px;box-shadow:0 1px 4px rgba(0,0,0,0.1);padding:12px;margin:10px}
+button.btn{border:none;padding:8px 14px;border-radius:16px;background:#ffb6c1;color:white;font-weight:500;margin-right:8px}
+input,textarea,select{width:100%;border:1px solid #f4c3cf;border-radius:12px;padding:8px;margin-top:4px;margin-bottom:8px}
+.grid{display:grid;gap:10px}
+.hidden{display:none}
+</style>
 </head>
 <body>
-  <div class="wrap">
-    <h1>Olly’s Dream</h1>
-    <div class="sub">Ткани • Выкройки • Готовые изделия — офлайн‑каталог с фото и связями</div>
-
-    <div class="tabs" role="tablist">
-      <button class="tab" role="tab" data-tab="fabrics" aria-selected="true">Ткани</button>
-      <button class="tab" role="tab" data-tab="patterns" aria-selected="false">Выкройки</button>
-      <button class="tab" role="tab" data-tab="products" aria-selected="false">Изделия</button>
-      <span class="spacer"></span>
-      <button class="btn primary" id="addBtn" type="button">+ Добавить</button>
-    </div>
-
-    <div id="lists">
-      <div class="list" data-list="fabrics"></div>
-      <div class="list hidden" data-list="patterns"></div>
-      <div class="list hidden" data-list="products"></div>
-    </div>
-  </div>
-
-  <!-- Modal -->
-  <div class="backdrop" id="backdrop" aria-hidden="true">
-    <form class="modal" id="modalForm">
-      <header id="modalTitle">Добавить</header>
-      <div class="body">
-        <div class="row">
-          <label for="fName">Название</label>
-          <input id="fName" type="text" autocomplete="off" required>
-        </div>
-
-        <div class="row" id="rowQty">
-          <label for="fQty">Количество (м)</label>
-          <input id="fQty" type="number" min="0" step="0.01" inputmode="decimal">
-        </div>
-
-        <div class="row">
-          <label for="fNote">Описание / заметка</label>
-          <textarea id="fNote" placeholder="Особенности, где хранится, проект и т. п."></textarea>
-        </div>
-
-        <div class="row">
-          <label>Фото (хранится в памяти устройства)</label>
-          <div class="file-row">
-            <input type="file" id="fPhoto" accept="image/*">
-            <button class="btn" type="button" id="btnOpenPhoto">Открыть большое</button>
-            <button class="btn" type="button" id="btnDeletePhoto">Удалить фото</button>
-          </div>
-          <div class="thumb-prev" id="photoPrev"><span class="muted" id="photoHint">Нет фото</span></div>
-        </div>
-
-        <!-- Links (only for products) -->
-        <div id="rowLinks" class="hidden">
-          <div class="row">
-            <label for="selFabrics">Связанные ткани</label>
-            <select id="selFabrics" multiple></select>
-          </div>
-          <div class="row">
-            <label for="selPatterns">Связанные выкройки</label>
-            <select id="selPatterns" multiple></select>
-          </div>
-        </div>
-      </div>
-      <div class="actions">
-        <button class="btn" type="button" id="btnCancel">Отмена</button>
-        <button class="btn primary" type="submit" id="btnSave">Сохранить</button>
-      </div>
-    </form>
-  </div>
-
-  <!-- Image Lightbox -->
-  <div class="lightbox" id="lightbox" aria-hidden="true"><img id="lightboxImg" alt=""></div>
-
+<header>
+  <img src="icon-needle-heart.png" alt="logo" width="60" height="60" style="border-radius:50%;margin-bottom:6px">
+  <h1>Olly’s Dream</h1>
+  <p class="subtitle">Швейный дневник с любовью 💖</p>
+</header>
+<div class="nav">
+  <button class="tabbtn active" id="tab1">Ткани</button>
+  <button class="tabbtn" id="tab2">Выкройки</button>
+  <button class="tabbtn" id="tab3">Изделия</button>
+</div>
+<div id="content" class="grid" style="padding:0 14px">
+  <div class="card">Добро пожаловать в твою обновлённую версию Olly’s Dream 💗<br>Чтобы добавить на экран iPhone: нажми <b>Поделиться → Добавить на экран домой</b>.</div>
+</div>
 <script>
-(function(){
-  const $ = (s,root=document)=>root.querySelector(s);
-  const $$ = (s,root=document)=>Array.from(root.querySelectorAll(s));
-
-  // ---------- State in localStorage (only light data) ----------
-  const LS_KEY = 'od_state_v4';
-  let state = load() || { tab:'fabrics', items:{ fabrics:[], patterns:[], products:[] } };
-  function load(){ try{ return JSON.parse(localStorage.getItem(LS_KEY)); }catch(e){ return null; } }
-  function save(){ localStorage.setItem(LS_KEY, JSON.stringify(state)); }
-
-  // ---------- id helpers ----------
-  function uid(){ return Math.random().toString(36).slice(2,10); }
-
-  // ---------- IndexedDB (photos) via idb-keyval ----------
-  // keys: photo:<id>
-  const urlPool = new Map();
-  async function savePhoto(id, file){
-    await idbKeyval.set('photo:'+id, file);
-    if(urlPool.has(id)) URL.revokeObjectURL(urlPool.get(id));
-    const url = URL.createObjectURL(file);
-    urlPool.set(id, url);
-    return url;
-  }
-  async function getPhotoUrl(id){
-    const blob = await idbKeyval.get('photo:'+id);
-    if(!blob) return null;
-    if(urlPool.has(id)) URL.revokeObjectURL(urlPool.get(id));
-    const url = URL.createObjectURL(blob);
-    urlPool.set(id, url);
-    return url;
-  }
-  async function deletePhoto(id){
-    await idbKeyval.del('photo:'+id);
-    if(urlPool.has(id)){ URL.revokeObjectURL(urlPool.get(id)); urlPool.delete(id); }
-  }
-
-  // ---------- Tabs ----------
-  function setTab(tab){
-    state.tab = tab; save();
-    $$('.tab').forEach(b=> b.setAttribute('aria-selected', b.dataset.tab===tab ? 'true':'false'));
-    $$('.list').forEach(list => list.classList.toggle('hidden', list.dataset.list!==tab));
-    // show qty only for fabrics
-    $('#rowQty').classList.toggle('hidden', tab!=='fabrics');
-    // show links block only for products
-    $('#rowLinks').classList.toggle('hidden', tab!=='products');
-    render();
-  }
-  document.addEventListener('click', (e)=>{
-    const tb = e.target.closest('.tab');
-    if(tb){ e.preventDefault(); setTab(tb.dataset.tab); }
-  }, {passive:false});
-
-  // ---------- Modal ----------
-  const backdrop = $('#backdrop');
-  const form = $('#modalForm');
-  const title = $('#modalTitle');
-  const fName = $('#fName');
-  const fQty  = $('#fQty');
-  const fNote = $('#fNote');
-  const fPhoto= $('#fPhoto');
-  const photoPrev = $('#photoPrev');
-  const photoHint = $('#photoHint');
-  const btnOpenPhoto = $('#btnOpenPhoto');
-  const btnDeletePhoto = $('#btnDeletePhoto');
-  const selFabrics = $('#selFabrics');
-  const selPatterns= $('#selPatterns');
-
-  let editing = null; // {type, id}
-
-  function openModal(mode){
-    title.textContent = mode==='edit' ? 'Изменить' : 'Добавить';
-    backdrop.setAttribute('aria-hidden','false');
-    document.body.style.overflow='hidden';
-    setTimeout(()=> fName.focus({preventScroll:true}), 0);
-  }
-  function closeModal(){
-    backdrop.setAttribute('aria-hidden','true');
-    document.body.style.overflow='';
-    form.reset();
-    photoPrev.innerHTML=''; photoPrev.appendChild(photoHint); photoHint.textContent='Нет фото';
-    editing = null;
-  }
-  $('#btnCancel').addEventListener('click', (e)=>{ e.preventDefault(); closeModal(); }, {passive:false});
-  backdrop.addEventListener('click', (e)=>{ if(e.target===backdrop) closeModal(); });
-  document.addEventListener('keydown', (e)=>{ if(e.key==='Escape' && backdrop.getAttribute('aria-hidden')==='false') closeModal(); });
-
-  // Fill selects for products
-  function fillLinkSelects(selectedFabricIds=[], selectedPatternIds=[]){
-    selFabrics.innerHTML=''; selPatterns.innerHTML='';
-    (state.items.fabrics||[]).forEach(f=>{
-      const opt = document.createElement('option'); opt.value=f.id; opt.textContent = f.name || '(без названия)';
-      if(selectedFabricIds.includes(f.id)) opt.selected = true;
-      selFabrics.appendChild(opt);
-    });
-    (state.items.patterns||[]).forEach(p=>{
-      const opt = document.createElement('option'); opt.value=p.id; opt.textContent = p.name || '(без названия)';
-      if(selectedPatternIds.includes(p.id)) opt.selected = true;
-      selPatterns.appendChild(opt);
-    });
-  }
-
-  // Photo preview/change
-  fPhoto.addEventListener('change', async (e)=>{
-    const file = e.target.files && e.target.files[0];
-    if(!file) return;
-    const url = URL.createObjectURL(file);
-    photoPrev.innerHTML = '<img alt="предпросмотр">';
-    photoPrev.querySelector('img').src = url;
-  });
-  btnOpenPhoto.addEventListener('click', async ()=>{
-    if(editing?.id){
-      const pick = fPhoto.files && fPhoto.files[0];
-      let url = null;
-      if(pick){ url = URL.createObjectURL(pick); }
-      else { url = await getPhotoUrl(editing.id); }
-      if(!url){ alert('Фото не добавлено'); return; }
-      openLightbox(url);
-    }
-  });
-  btnDeletePhoto.addEventListener('click', ()=>{
-    fPhoto.value = '';
-    photoPrev.innerHTML=''; photoPrev.appendChild(photoHint); photoHint.textContent='Фото будет удалено';
-    photoPrev.style.opacity='0.7';
-    photoPrev.dataset.toDelete = '1';
-  });
-
-  // Add
-  $('#addBtn').addEventListener('click', ()=>{
-    editing = {type: state.tab, id: null};
-    fName.value=''; fQty.value=''; fNote.value='';
-    photoPrev.innerHTML=''; photoPrev.appendChild(photoHint); photoHint.textContent='Нет фото'; photoPrev.style.opacity='1'; delete photoPrev.dataset.toDelete;
-    if(state.tab==='products'){ fillLinkSelects(); }
-    openModal('add');
-  });
-
-  // Save
-  form.addEventListener('submit', async (e)=>{
-    e.preventDefault();
-    try{
-      const type = editing.type;
-      let id = editing.id || uid();
-      const name = fName.value.trim() || '(без названия)';
-      const note = fNote.value.trim();
-      const qty  = state.tab==='fabrics' ? (parseFloat(fQty.value||'0')||0) : undefined;
-
-      // upsert
-      const arr = state.items[type];
-      let it = arr.find(x=>x.id===id);
-      if(!it){ it = {id}; arr.unshift(it); }
-
-      it.name = name; it.note = note;
-      if(type==='fabrics') it.qty = qty; else delete it.qty;
-
-      if(type==='products'){
-        it.fabricIds  = Array.from(selFabrics.selectedOptions||[]).map(o=>o.value);
-        it.patternIds = Array.from(selPatterns.selectedOptions||[]).map(o=>o.value);
-      }
-
-      // photo operations
-      const delMarked = photoPrev.dataset.toDelete==='1';
-      const newFile = fPhoto.files && fPhoto.files[0];
-
-      if(delMarked && it.photo){ await deletePhoto(id); it.photo = false; }
-      if(newFile){
-        await savePhoto(id, newFile);
-        it.photo = true;
-      }
-
-      save();
-      closeModal();
-      render();
-    }catch(err){
-      console.error(err);
-      alert('Не удалось сохранить. Возможно, нехватка памяти. Фото храним в IndexedDB, данные — в localStorage.');
-      try{ closeModal(); }catch{}
-    }
-  });
-
-  // ---------- Lightbox ----------
-  const lb = $('#lightbox'), lbImg = $('#lightboxImg');
-  function openLightbox(src){ lbImg.src = src; lb.setAttribute('aria-hidden','false'); }
-  lb.addEventListener('click', ()=>{ lb.setAttribute('aria-hidden','true'); lbImg.src=''; });
-
-  // ---------- Render ----------
-  async function render(){
-    for(const type of ['fabrics','patterns','products']){
-      const root = document.querySelector(`.list[data-list="${type}"]`);
-      root.innerHTML='';
-      const arr = state.items[type] || [];
-      if(!arr.length){
-        const div = document.createElement('div');
-        div.className='muted'; div.style.padding='8px 4px 18px';
-        div.textContent='Пусто — нажмите «+ Добавить»';
-        root.appendChild(div);
-        continue;
-      }
-      for(const it of arr){
-        const card = document.createElement('div');
-        card.className='card';
-
-        // thumb
-        const th = document.createElement('div'); th.className='thumb';
-        const img = document.createElement('img'); img.alt='';
-        if(it.photo){
-          getPhotoUrl(it.id).then(url=>{ if(url) img.src=url; });
-          th.addEventListener('click', async ()=>{ const url = await getPhotoUrl(it.id); if(url) openLightbox(url); });
-        }else{
-          img.src='data:image/svg+xml;utf8,'+encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="120" height="90"><rect width="100%" height="100%" fill="#f3f0f2"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="#9a8f96" font-family="sans-serif" font-size="12">Нет фото</text></svg>');
-        }
-        th.appendChild(img);
-        card.appendChild(th);
-
-        // content
-        const content = document.createElement('div'); content.style.minWidth='0'; content.style.flex='1 1 auto';
-        const titleEl = document.createElement('div'); titleEl.className='title'; titleEl.textContent=it.name||'(без названия)';
-        const noteEl = document.createElement('div'); noteEl.className='muted'; noteEl.textContent = it.note || '';
-        content.appendChild(titleEl); content.appendChild(noteEl);
-
-        // link chips for products
-        if(type==='products'){
-          const links = document.createElement('div'); links.className='links';
-          (it.fabricIds||[]).forEach(fid=>{
-            const f = (state.items.fabrics||[]).find(x=>x.id===fid);
-            if(f){ const chip=document.createElement('span'); chip.className='chip'; chip.textContent='Ткань: '+(f.name||'(без названия)');
-              chip.addEventListener('click', ()=>{ setTab('fabrics'); setTimeout(()=> scrollToCard(fid), 0); });
-              links.appendChild(chip);
-            }
-          });
-          (it.patternIds||[]).forEach(pid=>{
-            const p = (state.items.patterns||[]).find(x=>x.id===pid);
-            if(p){ const chip=document.createElement('span'); chip.className='chip'; chip.textContent='Выкройка: '+(p.name||'(без названия)');
-              chip.addEventListener('click', ()=>{ setTab('patterns'); setTimeout(()=> scrollToCard(pid), 0); });
-              links.appendChild(chip);
-            }
-          });
-          if(links.children.length) content.appendChild(links);
-        }
-
-        card.appendChild(content);
-
-        if(type==='fabrics'){
-          const qty = document.createElement('div'); qty.className='pill'; qty.textContent=(it.qty??0)+' м';
-          card.appendChild(qty);
-        }
-
-        const btn = document.createElement('button'); btn.className='btn'; btn.type='button'; btn.textContent='Изменить';
-        btn.addEventListener('click', async ()=>{
-          editing = {type, id: it.id};
-          fName.value = it.name||''; fNote.value = it.note||''; fQty.value = (type==='fabrics' && it.qty!=null)?it.qty:'';
-          // preview photo
-          photoPrev.innerHTML=''; delete photoPrev.dataset.toDelete; photoPrev.style.opacity='1';
-          const url = it.photo ? await getPhotoUrl(it.id) : null;
-          if(url){ photoPrev.innerHTML='<img alt="предпросмотр">'; photoPrev.querySelector('img').src=url; }
-          else { photoPrev.appendChild(photoHint); photoHint.textContent='Нет фото'; }
-          fPhoto.value='';
-
-          // fill selects if products
-          if(type==='products'){ fillLinkSelects(it.fabricIds||[], it.patternIds||[]); }
-          openModal('edit');
-        });
-        card.appendChild(btn);
-
-        // attach id for scroll target
-        card.dataset.itemId = it.id;
-
-        root.appendChild(card);
-      }
-    }
-  }
-
-  // helper to scroll to specific card by id
-  function scrollToCard(id){
-    const el = document.querySelector(`[data-item-id="${id}"]`);
-    if(el){ el.scrollIntoView({behavior:'smooth', block:'center'}); el.style.outline='2px solid #ff6ea2'; setTimeout(()=> el.style.outline='none', 1200); }
-  }
-
-  // expose setTab for chips
-  window.setTab = setTab;
-
-  // init
-  setTab(state.tab || 'fabrics');
-})();
+document.querySelectorAll('.tabbtn').forEach(b=>b.onclick=()=>{
+  document.querySelectorAll('.tabbtn').forEach(x=>x.classList.remove('active'));
+  b.classList.add('active');
+  document.getElementById('content').innerHTML='<div class="card">Раздел '+b.textContent+' в разработке 💕</div>';
+});
 </script>
 </body>
 </html>
