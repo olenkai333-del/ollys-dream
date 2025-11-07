@@ -1,97 +1,88 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Olly’s Dream</title>
-<style>
-  :root{
-    --bg:#f9d9e6;
-    --card:#fff;
-    --accent:#f08ab0;
-    --accent-2:#ff5fa2;
-    --text:#222;
-    --muted:#6b7280;
-    --shadow: 0 10px 24px rgba(0,0,0,.08);
-    --radius:18px;
-  }
-  html,body{height:100%;}
-  body{
-    margin:0;
-    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", Inter, Roboto, Arial, "Segoe UI", system-ui, "Helvetica Neue", Helvetica, sans-serif;
-    background:var(--bg);
-    color:var(--text);
-    -webkit-tap-highlight-color: transparent;
-  }
-  .container{max-width:980px;margin:0 auto;padding:28px 16px 48px;}
-  h1{margin:0 0 10px;font-size:32px;letter-spacing:.2px}
-  .sub{color:var(--muted);margin-bottom:18px}
-  .tabs{display:flex;gap:14px;margin:8px 0 18px}
-  .tab{
-    border:none;border-radius:999px;padding:12px 20px;
-    background:#fff; box-shadow:var(--shadow); font-weight:700; font-size:18px;
-  }
-  .tab[aria-selected="true"]{background:linear-gradient(180deg,#ffd7ea,#ffc4e0); outline:2px solid #fff}
-  .toolbar{display:flex;gap:10px;flex-wrap:wrap;margin:8px 0 16px}
-  .btn{
-    background:#fff; border:none; border-radius:12px; padding:10px 14px;
-    box-shadow:var(--shadow); font-weight:600;
-  }
-  .list{display:flex;flex-direction:column;gap:14px}
-  .card{
-    background:#fff;border-radius:20px;box-shadow:var(--shadow);
-    padding:12px 14px;display:flex;align-items:center;gap:14px;
-  }
-  .thumb{width:72px;height:72px;border-radius:12px;object-fit:cover;background:#f3f4f6;flex:0 0 auto}
-  .title{font-size:22px;font-weight:800;margin:0 0 2px}
-  .meta{color:var(--muted);font-size:14px;margin:2px 0}
-  .grow{flex:1 1 auto}
-  .link{color:#1f6fff;text-decoration:underline;font-size:14px}
-  .chip{display:inline-block;background:#ffe4ef;color:#67364a;padding:6px 10px;border-radius:999px;font-weight:700}
-  /* Modal */
-  .backdrop{
-    position:fixed;inset:0;background:rgba(0,0,0,.45);
-    display:none; /* hidden by default */
-    align-items:flex-end; justify-content:center;
-    padding:16px; z-index:9999; /* high to sit above everything */
-  }
-  .backdrop[aria-hidden="false"]{display:flex}
-  .modal{
-    background:#fff;border-radius:22px;width:100%;max-width:860px;max-height:85vh;
-    overflow:auto; -webkit-overflow-scrolling: touch; box-shadow:var(--shadow);
-  }
-  .modal header{padding:14px 18px 6px;font-weight:900;font-size:20px}
-  .modal section{padding:0 18px 18px}
-  .row{display:flex;flex-direction:column;gap:8px;margin:10px 0}
-  .row label{font-weight:800}
-  .row input[type=text], .row textarea{
-    appearance:none; border-radius:12px; border:1px solid #e5e7eb; padding:12px;
-    font-size:16px; background:#fff;
-  }
-  .row textarea{min-height:110px;resize:vertical}
-  .row .file{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
-  .modal footer{display:flex;gap:10px;justify-content:flex-end;padding:14px 18px;border-top:1px solid #f0f0f0;position:sticky;bottom:0;background:#fff}
-  .btn-secondary{background:#f3f4f6}
-  .btn-primary{background:linear-gradient(180deg,#ffa3c9,#ff6fb3);color:#fff;font-weight:900}
-  .hidden{display:none !important}
-</style>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Olly’s Dream — каталог тканей и выкроек</title>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <style>
+    :root{
+      --bg:#fde7ee; --card:#fff; --ink:#2b1e25; --muted:#6b5a61;
+      --accent:#ff6ea2; --pill:#ffd6e6; --shadow:0 8px 22px rgba(0,0,0,.08);
+      --link:#2b5bbb; --chip-bg:#eef4ff; --chip-txt:#1b3a90;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{margin:0;font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Inter,Arial;
+         background:var(--bg);color:var(--ink);-webkit-tap-highlight-color: transparent;}
+    .wrap{max-width:980px;margin:0 auto;padding:22px 14px 80px}
+    h1{margin:0 0 6px;font-size:32px}
+    .sub{color:var(--muted);margin-bottom:12px}
+
+    /* Tabs */
+    .tabs{display:flex;gap:12px;align-items:center;margin:10px 0 14px;flex-wrap:wrap}
+    .tab{border:0;border-radius:999px;background:#fff;box-shadow:var(--shadow);
+         padding:12px 18px;font-weight:800;cursor:pointer}
+    .tab[aria-selected="true"]{background:var(--accent);color:#fff}
+    .spacer{flex:1 1 auto}
+    .btn{border:0;border-radius:12px;padding:10px 14px;font-weight:800;cursor:pointer;
+         background:#fff;box-shadow:var(--shadow)}
+    .btn.primary{background:var(--accent);color:#fff}
+
+    /* Lists */
+    .list{display:grid;grid-template-columns:1fr;gap:12px;margin-top:8px}
+    @media(min-width:720px){.list{grid-template-columns:1fr 1fr}}
+
+    .card{display:flex;gap:12px;align-items:center;background:#fff;border-radius:18px;
+          box-shadow:var(--shadow);padding:12px}
+    .thumb{width:90px;height:90px;flex:0 0 auto;border-radius:12px;overflow:hidden;
+           background:#f3f0f2;display:flex;align-items:center;justify-content:center;cursor:pointer}
+    .thumb img{width:100%;height:100%;object-fit:cover;display:block}
+    .title{font-size:20px;font-weight:900;margin:0 0 4px;cursor:pointer;text-decoration:underline 1px rgba(0,0,0,.1)}
+    .muted{color:var(--muted);font-size:14px}
+    .pill{margin-left:auto;background:var(--pill);padding:8px 12px;border-radius:999px;font-weight:900}
+    .links{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px}
+    .chip{background:var(--chip-bg);color:var(--chip-txt);border-radius:999px;padding:6px 10px;font-weight:800;cursor:pointer;}
+
+    /* Modal */
+    .backdrop{position:fixed;inset:0;background:rgba(0,0,0,.45);display:none;align-items:flex-end;justify-content:center;padding:10px;z-index:1000}
+    .backdrop[aria-hidden="false"]{display:flex}
+    .modal{background:#fff;width:100%;max-width:700px;border-top-left-radius:16px;border-top-right-radius:16px;
+           max-height:85vh;overflow:auto;-webkit-overflow-scrolling:touch;box-shadow:0 -8px 28px rgba(0,0,0,.25)}
+    .modal header{position:sticky;top:0;background:#fff;padding:12px 14px 8px;border-bottom:1px solid #f0e7eb;font-weight:900}
+    .modal .body{padding:14px}
+    .row{display:flex;flex-direction:column;gap:6px;margin-bottom:12px}
+    label{font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:900}
+    input[type="text"],input[type="number"],textarea,select{width:100%;padding:12px;border-radius:12px;border:1px solid #e8e0e4;font-size:16px;background:#fff}
+    select[multiple]{min-height:104px}
+    textarea{min-height:96px;resize:vertical}
+    .file-row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+    .thumb-prev{width:120px;height:120px;border-radius:12px;background:#f3f0f2;display:flex;align-items:center;justify-content:center;overflow:hidden}
+    .thumb-prev img{width:100%;height:100%;object-fit:cover}
+    .actions{position:sticky;bottom:0;background:#fff;border-top:1px solid #f0e7eb;display:flex;gap:10px;justify-content:flex-end;padding:10px 14px}
+
+    .hidden{display:none !important}
+
+    /* Lightbox */
+    .lightbox{position:fixed;inset:0;background:rgba(0,0,0,.9);display:none;align-items:center;justify-content:center;z-index:1200}
+    .lightbox img{max-width:92vw;max-height:92vh;border-radius:12px}
+    .lightbox[aria-hidden="false"]{display:flex}
+  </style>
+
+  <!-- IndexedDB helper -->
+  <script src="https://cdn.jsdelivr.net/npm/idb-keyval@6/dist/idb-keyval.iife.min.js"></script>
 </head>
 <body>
-  <div class="container">
+  <div class="wrap">
     <h1>Olly’s Dream</h1>
-    <div class="sub">Ткани • Выкройки • Готовые изделия</div>
+    <div class="sub">Ткани • Выкройки • Готовые изделия — офлайн‑каталог с фото и связями</div>
 
     <div class="tabs" role="tablist">
       <button class="tab" role="tab" data-tab="fabrics" aria-selected="true">Ткани</button>
       <button class="tab" role="tab" data-tab="patterns" aria-selected="false">Выкройки</button>
       <button class="tab" role="tab" data-tab="products" aria-selected="false">Изделия</button>
-    </div>
-
-    <div class="toolbar">
-      <button class="btn" id="exportBtn" type="button">Экспорт JSON</button>
-      <label class="btn" for="importInput" style="cursor:pointer;">Импорт JSON</label>
-      <input id="importInput" type="file" accept="application/json" class="hidden">
-      <button class="btn" id="addBtn" type="button">+ Добавить</button>
+      <span class="spacer"></span>
+      <button class="btn primary" id="addBtn" type="button">+ Добавить</button>
     </div>
 
     <div id="lists">
@@ -105,260 +96,335 @@
   <div class="backdrop" id="backdrop" aria-hidden="true">
     <form class="modal" id="modalForm">
       <header id="modalTitle">Добавить</header>
-      <section>
-        <div class="row"><label>Название</label><input type="text" id="field-name" autocomplete="off"></div>
-        <div class="row" id="row-qty"><label>Количество (м)</label><input type="text" id="field-qty" inputmode="decimal" autocomplete="off"></div>
-        <div class="row"><label>Описание</label><textarea id="field-note" placeholder="Заметка / описание"></textarea></div>
+      <div class="body">
+        <div class="row">
+          <label for="fName">Название</label>
+          <input id="fName" type="text" autocomplete="off" required>
+        </div>
+
+        <div class="row" id="rowQty">
+          <label for="fQty">Количество (м)</label>
+          <input id="fQty" type="number" min="0" step="0.01" inputmode="decimal">
+        </div>
 
         <div class="row">
-          <label>Фото</label>
-          <div class="file">
-            <input type="file" id="field-photo" accept="image/*">
-            <button type="button" class="btn btn-secondary" id="openPhoto">Открыть большое</button>
+          <label for="fNote">Описание / заметка</label>
+          <textarea id="fNote" placeholder="Особенности, где хранится, проект и т. п."></textarea>
+        </div>
+
+        <div class="row">
+          <label>Фото (хранится в памяти устройства)</label>
+          <div class="file-row">
+            <input type="file" id="fPhoto" accept="image/*">
+            <button class="btn" type="button" id="btnOpenPhoto">Открыть большое</button>
+            <button class="btn" type="button" id="btnDeletePhoto">Удалить фото</button>
           </div>
-          <img id="photoPreview" class="thumb hidden" alt="превью">
+          <div class="thumb-prev" id="photoPrev"><span class="muted" id="photoHint">Нет фото</span></div>
         </div>
 
-        <div class="row">
-          <label>Файл (PDF или изображение)</label>
-          <input type="file" id="field-file" accept="application/pdf,image/*">
-          <div id="fileInfo" class="meta"></div>
+        <!-- Links (only for products) -->
+        <div id="rowLinks" class="hidden">
+          <div class="row">
+            <label for="selFabrics">Связанные ткани</label>
+            <select id="selFabrics" multiple></select>
+          </div>
+          <div class="row">
+            <label for="selPatterns">Связанные выкройки</label>
+            <select id="selPatterns" multiple></select>
+          </div>
         </div>
-      </section>
-      <footer>
-        <button type="button" class="btn btn-secondary" id="cancelBtn">Отмена</button>
-        <button type="submit" class="btn btn-primary" id="saveBtn">Сохранить</button>
-      </footer>
+      </div>
+      <div class="actions">
+        <button class="btn" type="button" id="btnCancel">Отмена</button>
+        <button class="btn primary" type="submit" id="btnSave">Сохранить</button>
+      </div>
     </form>
   </div>
 
+  <!-- Image Lightbox -->
+  <div class="lightbox" id="lightbox" aria-hidden="true"><img id="lightboxImg" alt=""></div>
+
 <script>
 (function(){
-  const LS_KEY = 'ollys_dream_v2';
-  const $ = (sel, root=document)=>root.querySelector(sel);
-  const $$= (sel, root=document)=>Array.from(root.querySelectorAll(sel));
+  const $ = (s,root=document)=>root.querySelector(s);
+  const $$ = (s,root=document)=>Array.from(root.querySelectorAll(s));
 
-  // State
-  let state = load() || {tab:'fabrics', items:{fabrics:[], patterns:[], products:[]}};
-  let editing = null; // {type, id}
-
-  // ---------- helpers ----------
+  // ---------- State in localStorage (only light data) ----------
+  const LS_KEY = 'od_state_v4';
+  let state = load() || { tab:'fabrics', items:{ fabrics:[], patterns:[], products:[] } };
   function load(){ try{ return JSON.parse(localStorage.getItem(LS_KEY)); }catch(e){ return null; } }
   function save(){ localStorage.setItem(LS_KEY, JSON.stringify(state)); }
+
+  // ---------- id helpers ----------
   function uid(){ return Math.random().toString(36).slice(2,10); }
 
+  // ---------- IndexedDB (photos) via idb-keyval ----------
+  // keys: photo:<id>
+  const urlPool = new Map();
+  async function savePhoto(id, file){
+    await idbKeyval.set('photo:'+id, file);
+    if(urlPool.has(id)) URL.revokeObjectURL(urlPool.get(id));
+    const url = URL.createObjectURL(file);
+    urlPool.set(id, url);
+    return url;
+  }
+  async function getPhotoUrl(id){
+    const blob = await idbKeyval.get('photo:'+id);
+    if(!blob) return null;
+    if(urlPool.has(id)) URL.revokeObjectURL(urlPool.get(id));
+    const url = URL.createObjectURL(blob);
+    urlPool.set(id, url);
+    return url;
+  }
+  async function deletePhoto(id){
+    await idbKeyval.del('photo:'+id);
+    if(urlPool.has(id)){ URL.revokeObjectURL(urlPool.get(id)); urlPool.delete(id); }
+  }
+
+  // ---------- Tabs ----------
   function setTab(tab){
     state.tab = tab; save();
     $$('.tab').forEach(b=> b.setAttribute('aria-selected', b.dataset.tab===tab ? 'true':'false'));
-    $$('.list').forEach(list => {
-      list.classList.toggle('hidden', list.dataset.list !== tab);
-    });
+    $$('.list').forEach(list => list.classList.toggle('hidden', list.dataset.list!==tab));
+    // show qty only for fabrics
+    $('#rowQty').classList.toggle('hidden', tab!=='fabrics');
+    // show links block only for products
+    $('#rowLinks').classList.toggle('hidden', tab!=='products');
     render();
   }
-
-  function openModal(title){
-    $('#modalTitle').textContent = title;
-    // show qty only for fabrics
-    $('#row-qty').classList.toggle('hidden', state.tab!=='fabrics');
-    $('#backdrop').setAttribute('aria-hidden','false');
-    // avoid background scroll
-    document.body.style.overflow='hidden';
-    $('#field-name').focus({preventScroll:true});
-  }
-  function closeModal(){
-    $('#backdrop').setAttribute('aria-hidden','true');
-    document.body.style.overflow='';
-    editing = null;
-    $('#modalForm').reset();
-    $('#photoPreview').classList.add('hidden');
-    $('#fileInfo').textContent='';
-  }
-
-  function fileToDataURL(file){
-    return new Promise((res,rej)=>{
-      const r = new FileReader();
-      r.onload = () => res(r.result);
-      r.onerror = rej;
-      r.readAsDataURL(file);
-    });
-  }
-
-  // ---------- render ----------
-  function render(){
-    ['fabrics','patterns','products'].forEach(type=>{
-      const container = document.querySelector(`.list[data-list="${type}"]`);
-      container.innerHTML = '';
-      const arr = state.items[type];
-      if(!arr || !arr.length){
-        const empty = document.createElement('div');
-        empty.className='meta';
-        empty.style.padding='4px 8px 18px';
-        empty.textContent='Пусто. Нажмите «+ Добавить»';
-        container.appendChild(empty);
-        return;
-      }
-      arr.forEach(item=>{
-        const card = document.createElement('div');
-        card.className='card';
-        const img = document.createElement('img');
-        img.className='thumb';
-        img.alt='фото';
-        if(item.photo) img.src=item.photo; else img.classList.add('hidden');
-        img.dataset.action='previewPhoto'; img.dataset.type=type; img.dataset.id=item.id;
-        const grow = document.createElement('div');
-        grow.className='grow';
-        const h = document.createElement('div');
-        h.className='title'; h.textContent=item.name || 'Без названия';
-        h.tabIndex=0; h.dataset.action='openCard'; h.dataset.type=type; h.dataset.id=item.id;
-        const m1 = document.createElement('div'); m1.className='meta';
-        if(type==='fabrics'){
-          m1.textContent = item.note ? item.note : '';
-          const m2 = document.createElement('div'); m2.className='meta';
-          m2.textContent = (item.qty ? ('Кол-во: ' + item.qty + ' м') : '');
-          grow.appendChild(h); grow.appendChild(m1); grow.appendChild(m2);
-        } else {
-          m1.textContent = item.note || '';
-          grow.appendChild(h); grow.appendChild(m1);
-        }
-        const edit = document.createElement('button');
-        edit.type='button'; edit.className='btn'; edit.textContent='Изменить';
-        edit.dataset.action='edit'; edit.dataset.type=type; edit.dataset.id=item.id;
-
-        card.appendChild(img); card.appendChild(grow); card.appendChild(edit);
-        container.appendChild(card);
-      });
-    });
-  }
-
-  // ---------- initial ----------
-  // Tabs: delegate clicks & touch
   document.addEventListener('click', (e)=>{
-    const tab = e.target.closest('.tab');
-    if(tab){ e.preventDefault(); setTab(tab.dataset.tab); return; }
-
-    const actEl = e.target.closest('[data-action]');
-    if(actEl){
-      const action = actEl.dataset.action;
-      const type = actEl.dataset.type;
-      const id = actEl.dataset.id;
-      const arr = state.items[type];
-      const item = arr && arr.find(x=>x.id===id);
-      if(action==='edit' && item){
-        editing = {type,id};
-        $('#field-name').value = item.name || '';
-        $('#field-note').value = item.note || '';
-        $('#field-qty').value = item.qty || '';
-        if(item.photo){ $('#photoPreview').src=item.photo; $('#photoPreview').classList.remove('hidden'); }
-        $('#fileInfo').textContent = item.fileName ? item.fileName : '';
-        openModal('Изменить');
-        return;
-      }
-      if(action==='openCard' && item){
-        // простое окно с просмотром
-        alert((item.name||'Без названия') + (item.note?'\n\n'+item.note:''));
-        return;
-      }
-      if(action==='previewPhoto' && item && item.photo){
-        const w = window.open('about:blank','_blank');
-        w.document.write(`<img src="${item.photo}" style="width:100%;height:auto">`);
-        return;
-      }
-    }
+    const tb = e.target.closest('.tab');
+    if(tb){ e.preventDefault(); setTab(tb.dataset.tab); }
   }, {passive:false});
 
-  // Open Add
+  // ---------- Modal ----------
+  const backdrop = $('#backdrop');
+  const form = $('#modalForm');
+  const title = $('#modalTitle');
+  const fName = $('#fName');
+  const fQty  = $('#fQty');
+  const fNote = $('#fNote');
+  const fPhoto= $('#fPhoto');
+  const photoPrev = $('#photoPrev');
+  const photoHint = $('#photoHint');
+  const btnOpenPhoto = $('#btnOpenPhoto');
+  const btnDeletePhoto = $('#btnDeletePhoto');
+  const selFabrics = $('#selFabrics');
+  const selPatterns= $('#selPatterns');
+
+  let editing = null; // {type, id}
+
+  function openModal(mode){
+    title.textContent = mode==='edit' ? 'Изменить' : 'Добавить';
+    backdrop.setAttribute('aria-hidden','false');
+    document.body.style.overflow='hidden';
+    setTimeout(()=> fName.focus({preventScroll:true}), 0);
+  }
+  function closeModal(){
+    backdrop.setAttribute('aria-hidden','true');
+    document.body.style.overflow='';
+    form.reset();
+    photoPrev.innerHTML=''; photoPrev.appendChild(photoHint); photoHint.textContent='Нет фото';
+    editing = null;
+  }
+  $('#btnCancel').addEventListener('click', (e)=>{ e.preventDefault(); closeModal(); }, {passive:false});
+  backdrop.addEventListener('click', (e)=>{ if(e.target===backdrop) closeModal(); });
+  document.addEventListener('keydown', (e)=>{ if(e.key==='Escape' && backdrop.getAttribute('aria-hidden')==='false') closeModal(); });
+
+  // Fill selects for products
+  function fillLinkSelects(selectedFabricIds=[], selectedPatternIds=[]){
+    selFabrics.innerHTML=''; selPatterns.innerHTML='';
+    (state.items.fabrics||[]).forEach(f=>{
+      const opt = document.createElement('option'); opt.value=f.id; opt.textContent = f.name || '(без названия)';
+      if(selectedFabricIds.includes(f.id)) opt.selected = true;
+      selFabrics.appendChild(opt);
+    });
+    (state.items.patterns||[]).forEach(p=>{
+      const opt = document.createElement('option'); opt.value=p.id; opt.textContent = p.name || '(без названия)';
+      if(selectedPatternIds.includes(p.id)) opt.selected = true;
+      selPatterns.appendChild(opt);
+    });
+  }
+
+  // Photo preview/change
+  fPhoto.addEventListener('change', async (e)=>{
+    const file = e.target.files && e.target.files[0];
+    if(!file) return;
+    const url = URL.createObjectURL(file);
+    photoPrev.innerHTML = '<img alt="предпросмотр">';
+    photoPrev.querySelector('img').src = url;
+  });
+  btnOpenPhoto.addEventListener('click', async ()=>{
+    if(editing?.id){
+      const pick = fPhoto.files && fPhoto.files[0];
+      let url = null;
+      if(pick){ url = URL.createObjectURL(pick); }
+      else { url = await getPhotoUrl(editing.id); }
+      if(!url){ alert('Фото не добавлено'); return; }
+      openLightbox(url);
+    }
+  });
+  btnDeletePhoto.addEventListener('click', ()=>{
+    fPhoto.value = '';
+    photoPrev.innerHTML=''; photoPrev.appendChild(photoHint); photoHint.textContent='Фото будет удалено';
+    photoPrev.style.opacity='0.7';
+    photoPrev.dataset.toDelete = '1';
+  });
+
+  // Add
   $('#addBtn').addEventListener('click', ()=>{
     editing = {type: state.tab, id: null};
-    openModal('Добавить');
+    fName.value=''; fQty.value=''; fNote.value='';
+    photoPrev.innerHTML=''; photoPrev.appendChild(photoHint); photoHint.textContent='Нет фото'; photoPrev.style.opacity='1'; delete photoPrev.dataset.toDelete;
+    if(state.tab==='products'){ fillLinkSelects(); }
+    openModal('add');
   });
 
-  // Export / Import
-  $('#exportBtn').addEventListener('click', ()=>{
-    const blob = new Blob([JSON.stringify(state)], {type:'application/json'});
-    const a = document.createElement('a');
-    a.href = URL.createObjectURL(blob);
-    a.download = 'ollys_dream_backup.json';
-    a.click(); URL.revokeObjectURL(a.href);
-  });
-  $('#importInput').addEventListener('change', async (e)=>{
-    const file = e.target.files[0]; if(!file) return;
-    const text = await file.text();
-    try{
-      const obj = JSON.parse(text);
-      if(obj && obj.items){ state = obj; save(); render(); setTab(state.tab||'fabrics'); }
-    }catch(err){ alert('Не удалось импортировать файл'); }
-    e.target.value='';
-  });
-
-  // Backdrop close on outside tap
-  $('#backdrop').addEventListener('click', (e)=>{
-    if(e.target.id==='backdrop'){ closeModal(); }
-  });
-  // Cancel button
-  $('#cancelBtn').addEventListener('click', (e)=>{ e.preventDefault(); closeModal(); }, {passive:false});
-
-  // Photo preview
-  $('#field-photo').addEventListener('change', async (e)=>{
-    const f = e.target.files[0];
-    if(!f){ $('#photoPreview').classList.add('hidden'); return; }
-    const data = await fileToDataURL(f);
-    $('#photoPreview').src = data;
-    $('#photoPreview').classList.remove('hidden');
-  });
-  $('#openPhoto').addEventListener('click', ()=>{
-    const src = $('#photoPreview').src;
-    if(!src) return;
-    const w = window.open('about:blank','_blank');
-    w.document.write(`<img src="${src}" style="width:100%;height:auto">`);
-  });
-
-  $('#field-file').addEventListener('change', (e)=>{
-    const f = e.target.files[0];
-    $('#fileInfo').textContent = f ? (f.name + (f.type?` (${f.type.split('/').pop().toUpperCase()})`:'')) : '';
-  });
-
-  // Save (submit)
-  $('#modalForm').addEventListener('submit', async (e)=>{
+  // Save
+  form.addEventListener('submit', async (e)=>{
     e.preventDefault();
-    const name = $('#field-name').value.trim();
-    const note = $('#field-note').value.trim();
-    const qtyRaw = $('#field-qty').value.trim();
-    const photoFile = $('#field-photo').files[0];
-    const file = $('#field-file').files[0];
+    try{
+      const type = editing.type;
+      let id = editing.id || uid();
+      const name = fName.value.trim() || '(без названия)';
+      const note = fNote.value.trim();
+      const qty  = state.tab==='fabrics' ? (parseFloat(fQty.value||'0')||0) : undefined;
 
-    let photoData = null;
-    if(photoFile){ photoData = await fileToDataURL(photoFile); }
+      // upsert
+      const arr = state.items[type];
+      let it = arr.find(x=>x.id===id);
+      if(!it){ it = {id}; arr.unshift(it); }
 
-    let fileData = null, fileName = null, fileType = null;
-    if(file){ fileData = await fileToDataURL(file); fileName = file.name; fileType = file.type; }
+      it.name = name; it.note = note;
+      if(type==='fabrics') it.qty = qty; else delete it.qty;
 
-    const type = editing.type;
-    if(editing.id){
-      const idx = state.items[type].findIndex(x=>x.id===editing.id);
-      if(idx>-1){
-        const prev = state.items[type][idx];
-        state.items[type][idx] = {
-          ...prev,
-          name, note,
-          qty: type==='fabrics' ? qtyRaw : undefined,
-          photo: photoData || prev.photo || null,
-          file: fileData || prev.file || null,
-          fileName: fileName || prev.fileName || null,
-          fileType: fileType || prev.fileType || null,
-        };
+      if(type==='products'){
+        it.fabricIds  = Array.from(selFabrics.selectedOptions||[]).map(o=>o.value);
+        it.patternIds = Array.from(selPatterns.selectedOptions||[]).map(o=>o.value);
       }
-    } else {
-      const obj = {
-        id: uid(), name, note,
-        qty: type==='fabrics' ? qtyRaw : undefined,
-        photo: photoData, file: fileData, fileName, fileType
-      };
-      state.items[type].unshift(obj);
+
+      // photo operations
+      const delMarked = photoPrev.dataset.toDelete==='1';
+      const newFile = fPhoto.files && fPhoto.files[0];
+
+      if(delMarked && it.photo){ await deletePhoto(id); it.photo = false; }
+      if(newFile){
+        await savePhoto(id, newFile);
+        it.photo = true;
+      }
+
+      save();
+      closeModal();
+      render();
+    }catch(err){
+      console.error(err);
+      alert('Не удалось сохранить. Возможно, нехватка памяти. Фото храним в IndexedDB, данные — в localStorage.');
+      try{ closeModal(); }catch{}
     }
-    save(); render(); closeModal();
   });
 
-  // Restore UI
+  // ---------- Lightbox ----------
+  const lb = $('#lightbox'), lbImg = $('#lightboxImg');
+  function openLightbox(src){ lbImg.src = src; lb.setAttribute('aria-hidden','false'); }
+  lb.addEventListener('click', ()=>{ lb.setAttribute('aria-hidden','true'); lbImg.src=''; });
+
+  // ---------- Render ----------
+  async function render(){
+    for(const type of ['fabrics','patterns','products']){
+      const root = document.querySelector(`.list[data-list="${type}"]`);
+      root.innerHTML='';
+      const arr = state.items[type] || [];
+      if(!arr.length){
+        const div = document.createElement('div');
+        div.className='muted'; div.style.padding='8px 4px 18px';
+        div.textContent='Пусто — нажмите «+ Добавить»';
+        root.appendChild(div);
+        continue;
+      }
+      for(const it of arr){
+        const card = document.createElement('div');
+        card.className='card';
+
+        // thumb
+        const th = document.createElement('div'); th.className='thumb';
+        const img = document.createElement('img'); img.alt='';
+        if(it.photo){
+          getPhotoUrl(it.id).then(url=>{ if(url) img.src=url; });
+          th.addEventListener('click', async ()=>{ const url = await getPhotoUrl(it.id); if(url) openLightbox(url); });
+        }else{
+          img.src='data:image/svg+xml;utf8,'+encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="120" height="90"><rect width="100%" height="100%" fill="#f3f0f2"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="#9a8f96" font-family="sans-serif" font-size="12">Нет фото</text></svg>');
+        }
+        th.appendChild(img);
+        card.appendChild(th);
+
+        // content
+        const content = document.createElement('div'); content.style.minWidth='0'; content.style.flex='1 1 auto';
+        const titleEl = document.createElement('div'); titleEl.className='title'; titleEl.textContent=it.name||'(без названия)';
+        const noteEl = document.createElement('div'); noteEl.className='muted'; noteEl.textContent = it.note || '';
+        content.appendChild(titleEl); content.appendChild(noteEl);
+
+        // link chips for products
+        if(type==='products'){
+          const links = document.createElement('div'); links.className='links';
+          (it.fabricIds||[]).forEach(fid=>{
+            const f = (state.items.fabrics||[]).find(x=>x.id===fid);
+            if(f){ const chip=document.createElement('span'); chip.className='chip'; chip.textContent='Ткань: '+(f.name||'(без названия)');
+              chip.addEventListener('click', ()=>{ setTab('fabrics'); setTimeout(()=> scrollToCard(fid), 0); });
+              links.appendChild(chip);
+            }
+          });
+          (it.patternIds||[]).forEach(pid=>{
+            const p = (state.items.patterns||[]).find(x=>x.id===pid);
+            if(p){ const chip=document.createElement('span'); chip.className='chip'; chip.textContent='Выкройка: '+(p.name||'(без названия)');
+              chip.addEventListener('click', ()=>{ setTab('patterns'); setTimeout(()=> scrollToCard(pid), 0); });
+              links.appendChild(chip);
+            }
+          });
+          if(links.children.length) content.appendChild(links);
+        }
+
+        card.appendChild(content);
+
+        if(type==='fabrics'){
+          const qty = document.createElement('div'); qty.className='pill'; qty.textContent=(it.qty??0)+' м';
+          card.appendChild(qty);
+        }
+
+        const btn = document.createElement('button'); btn.className='btn'; btn.type='button'; btn.textContent='Изменить';
+        btn.addEventListener('click', async ()=>{
+          editing = {type, id: it.id};
+          fName.value = it.name||''; fNote.value = it.note||''; fQty.value = (type==='fabrics' && it.qty!=null)?it.qty:'';
+          // preview photo
+          photoPrev.innerHTML=''; delete photoPrev.dataset.toDelete; photoPrev.style.opacity='1';
+          const url = it.photo ? await getPhotoUrl(it.id) : null;
+          if(url){ photoPrev.innerHTML='<img alt="предпросмотр">'; photoPrev.querySelector('img').src=url; }
+          else { photoPrev.appendChild(photoHint); photoHint.textContent='Нет фото'; }
+          fPhoto.value='';
+
+          // fill selects if products
+          if(type==='products'){ fillLinkSelects(it.fabricIds||[], it.patternIds||[]); }
+          openModal('edit');
+        });
+        card.appendChild(btn);
+
+        // attach id for scroll target
+        card.dataset.itemId = it.id;
+
+        root.appendChild(card);
+      }
+    }
+  }
+
+  // helper to scroll to specific card by id
+  function scrollToCard(id){
+    const el = document.querySelector(`[data-item-id="${id}"]`);
+    if(el){ el.scrollIntoView({behavior:'smooth', block:'center'}); el.style.outline='2px solid #ff6ea2'; setTimeout(()=> el.style.outline='none', 1200); }
+  }
+
+  // expose setTab for chips
+  window.setTab = setTab;
+
+  // init
   setTab(state.tab || 'fabrics');
 })();
 </script>
