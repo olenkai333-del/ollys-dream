@@ -19,28 +19,20 @@
     --radius:18px;
   }
   html,body{height:100%}
-  body{
-    margin:0;
-    font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
-    background:var(--bg);
-    color:var(--ink);
-  }
+  body{margin:0;font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;background:var(--bg);color:var(--ink);}
   .wrap{max-width:980px;margin:0 auto;padding:28px 16px 120px}
   h1{font-size:40px;margin:8px 0 12px}
   .sub{color:var(--ink-dim);opacity:.9;margin-bottom:20px}
   .row{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
-  .btn{
-    background:#fff;border:0;padding:12px 16px;border-radius:999px;
-    box-shadow:var(--shadow);cursor:pointer;font-weight:700
-  }
+  .btn{background:#fff;border:0;padding:12px 16px;border-radius:999px;box-shadow:var(--shadow);cursor:pointer;font-weight:700}
   .btn.primary{background:var(--accent);color:#fff}
   .btn.ghost{background:var(--pill)}
+  .btn.tiny{padding:8px 12px;border-radius:10px;font-weight:800}
   .tabs{display:flex;gap:16px;margin:18px 0 10px}
   .tab{padding:14px 22px;background:#fff;border-radius:999px;cursor:pointer;font-weight:800;box-shadow:var(--shadow);}
   .tab.active{background:var(--accent);color:#fff}
   .search{width:100%;padding:14px 18px;border-radius:14px;border:0;box-shadow:var(--shadow);}
   .stats{display:flex;gap:16px;margin:14px 0 8px}
-  .chip{display:inline-flex;align-items:center;gap:8px;background:#fff;padding:10px 14px;border-radius:999px;box-shadow:var(--shadow);font-weight:700}
   .list{display:grid;grid-template-columns:1fr;gap:14px;margin-top:8px}
   @media(min-width:720px){.list{grid-template-columns:1fr 1fr}}
   .card{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);padding:14px;display:flex;gap:14px;align-items:stretch}
@@ -53,14 +45,14 @@
   .tag{background:var(--pill);padding:8px 12px;border-radius:999px;font-weight:700}
   .links{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
   .link-chip{background:#eef4ff;color:#243ea1;padding:8px 12px;border-radius:999px;cursor:pointer;font-weight:700}
+  .file-chip{background:#e9fff3;color:#106b3a;padding:8px 12px;border-radius:999px;cursor:pointer;font-weight:800}
   .row-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:10px}
-  .a{color:#274EA0;cursor:pointer;font-weight:700}
   /* modal */
   .modal-back{position:fixed;inset:0;background:rgba(0,0,0,.4);display:none;align-items:center;justify-content:center;padding:16px;z-index:20}
-  .modal{background:#fff;max-width:760px;width:min(760px,100%);border-radius:20px;box-shadow:var(--shadow);padding:16px}
+  .modal{background:#fff;max-width:800px;width:min(800px,100%);border-radius:20px;box-shadow:var(--shadow);padding:16px}
   .modal .title{font-size:22px;font-weight:900;margin:4px 0 12px}
   .grid{display:grid;grid-template-columns:1fr;gap:12px}
-  @media(min-width:680px){.grid{grid-template-columns:1fr 1fr}}
+  @media(min-width:720px){.grid{grid-template-columns:1fr 1fr}}
   label{font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-dim);font-weight:800}
   input,select,textarea{width:100%;padding:12px 12px;border:1px solid #e8e0e4;border-radius:12px;background:#fff}
   textarea{min-height:96px;resize:vertical}
@@ -68,7 +60,12 @@
   /* lightbox */
   .lightbox{position:fixed;inset:0;background:rgba(0,0,0,.9);display:none;align-items:center;justify-content:center;z-index:30}
   .lightbox img{max-width:92vw;max-height:92vh;border-radius:16px}
-  /* pills on counters */
+  /* PDF inline viewer modal */
+  .pdf-back{position:fixed;inset:0;background:rgba(0,0,0,.55);display:none;align-items:center;justify-content:center;padding:10px;z-index:40}
+  .pdf-wrap{background:#111;border-radius:16px;max-width:98vw;max-height:96vh;width:900px;height:90vh;display:flex;flex-direction:column}
+  .pdf-head{display:flex;align-items:center;justify-content:space-between;padding:8px 12px;color:#fff}
+  .pdf-body{flex:1 1 auto;background:#222;overflow:hidden}
+  .pdf-body iframe{border:0;width:100%;height:100%;background:#fff}
   .pill{background:#fff;border-radius:999px;padding:10px 14px;box-shadow:var(--shadow);font-weight:800}
 </style>
 </head>
@@ -106,7 +103,7 @@
       <div class="title" id="modalTitle"></div>
       <form id="form">
         <div class="grid" id="formGrid"></div>
-        <div class="actions">
+        <div class="actions" id="formActions">
           <button type="button" class="btn ghost" id="btnDelete">Удалить</button>
           <button type="button" class="btn" id="btnCancel">Отмена</button>
           <button type="submit" class="btn primary" id="btnSave">Сохранить</button>
@@ -118,9 +115,43 @@
   <!-- lightbox -->
   <div class="lightbox" id="lightbox"><img id="lightboxImg" alt=""></div>
 
+  <!-- pdf viewer -->
+  <div class="pdf-back" id="pdfBack">
+    <div class="pdf-wrap">
+      <div class="pdf-head">
+        <div id="pdfTitle">Файл</div>
+        <div>
+          <button class="btn tiny" id="pdfDownload">Скачать</button>
+          <button class="btn tiny" id="pdfClose">Закрыть</button>
+        </div>
+      </div>
+      <div class="pdf-body"><iframe id="pdfFrame"></iframe></div>
+    </div>
+  </div>
+
 <script>
+/** -------- IndexedDB for big files (PDF/images) -------- */
+const DB_NAME='ollysDreamFiles', STORE='files';
+let idb = null;
+function idbOpen(){
+  return new Promise((resolve,reject)=>{
+    const req = indexedDB.open(DB_NAME, 1);
+    req.onupgradeneeded = (e)=>{
+      const db = e.target.result;
+      if(!db.objectStoreNames.contains(STORE)){
+        db.createObjectStore(STORE, { keyPath:'key' });
+      }
+    };
+    req.onsuccess = ()=>{ idb=req.result; resolve(idb); };
+    req.onerror = ()=>reject(req.error);
+  });
+}
+async function idbPut(record){ await idbOpen(); return new Promise((res,rej)=>{ const tx=idb.transaction(STORE,'readwrite'); tx.objectStore(STORE).put(record); tx.oncomplete=()=>res(true); tx.onerror=()=>rej(tx.error); }); }
+async function idbGet(key){ await idbOpen(); return new Promise((res,rej)=>{ const tx=idb.transaction(STORE,'readonly'); const req=tx.objectStore(STORE).get(key); req.onsuccess=()=>res(req.result||null); req.onerror=()=>rej(req.error); }); }
+async function idbDel(key){ await idbOpen(); return new Promise((res,rej)=>{ const tx=idb.transaction(STORE,'readwrite'); tx.objectStore(STORE).delete(key); tx.oncomplete=()=>res(true); tx.onerror=()=>rej(tx.error); }); }
+
 /** -------- store & helpers -------- */
-const LS_KEY = 'ollys-dream-v3';
+const LS_KEY = 'ollys-dream-v4';
 function uid(){ return Math.random().toString(36).slice(2,9); }
 function load(){
   try{
@@ -132,14 +163,6 @@ function load(){
   }catch(e){ return { fabrics:[], patterns:[], items:[] }; }
 }
 function save(){ localStorage.setItem(LS_KEY, JSON.stringify(db)); }
-function dataURLFromFile(file){
-  return new Promise((resolve,reject)=>{
-    const r = new FileReader();
-    r.onload = ()=> resolve(r.result);
-    r.onerror = reject;
-    r.readAsDataURL(file);
-  });
-}
 let db = load();
 let currentTab = 'fabrics';
 let editing = null; // {type, id}
@@ -185,7 +208,7 @@ document.getElementById('importInput').addEventListener('change', async (e)=>{
     if(!obj || typeof obj!=='object') throw 0;
     db = { fabrics: obj.fabrics||[], patterns: obj.patterns||[], items: obj.items||[] };
     save(); render();
-    alert('Импорт выполнен.');
+    alert('Импорт выполнен. (Примечание: файлы PDF/изображения хранятся отдельно в памяти устройства и не входят в JSON-бэкап.)');
   }catch(err){ alert('Не удалось импортировать файл.'); }
   e.target.value='';
 });
@@ -199,7 +222,6 @@ function render(){
     const hay = (it.name+' '+(it.tags||[]).join(' ')+' '+(it.note||it.desc||'')).toLowerCase();
     return hay.includes(q);
   });
-  // stats (только для тканей)
   if(currentTab==='fabrics'){
     const total = db.fabrics.reduce((s,f)=>s+(Number(f.qty)||0),0);
     const spent = db.fabrics.reduce((s,f)=>s+(Number(f.spent)||0),0);
@@ -218,28 +240,31 @@ function makeLinkChip(type,id,label){
   el.textContent=label;
   return el;
 }
+function makeFileChip(meta){
+  const el = document.createElement('span');
+  el.className='file-chip';
+  el.textContent = (meta?.fileName || 'Файл');
+  el.title = 'Открыть файл';
+  el.addEventListener('click', ()=> openStoredFile(meta));
+  return el;
+}
 function card(it, type){
   const root = document.createElement('div');
   root.className = 'card';
-  // thumb
   const th = document.createElement('div');
   th.className='thumb'; th.title='Открыть фото';
-  if(it.photo){
-    const img = document.createElement('img'); img.src = it.photo; th.appendChild(img);
-  }else{ th.textContent='Фото'; }
+  if(it.photo){ const img = document.createElement('img'); img.src = it.photo; th.appendChild(img); } else { th.textContent='Фото'; }
   th.addEventListener('click',()=> openLightbox(it.photo));
   root.appendChild(th);
   const mid = document.createElement('div'); mid.className='grow';
-  const name = document.createElement('div'); name.className='name a'; name.textContent=it.name||'(без названия)';
+  const name = document.createElement('div'); name.className='name'; name.textContent=it.name||'(без названия)';
   name.addEventListener('click',()=> openView(type, it.id));
   mid.appendChild(name);
   if(type==='fabrics'){
     const line = document.createElement('div'); line.className='muted'; line.textContent = (it.note||'').trim() || '—'; mid.appendChild(line);
     const qty = document.createElement('div'); qty.className='muted'; qty.style.marginTop='4px'; qty.innerHTML = 'Кол-во: <b>'+ (Number(it.qty)||0) +' м</b>'; mid.appendChild(qty);
-  }else if(type==='patterns'){
-    const line = document.createElement('div'); line.className='muted'; line.textContent = (it.desc||'Выкройка'); mid.appendChild(line);
   }else{
-    const line = document.createElement('div'); line.className='muted'; line.textContent = (it.desc||'Изделие'); mid.appendChild(line);
+    const line = document.createElement('div'); line.className='muted'; line.textContent = (it.desc||''); mid.appendChild(line);
   }
   const tg = document.createElement('div'); tg.className='tags';
   (it.tags||[]).forEach(t=>{ const span=document.createElement('span'); span.className='tag'; span.textContent=t; tg.appendChild(span); });
@@ -251,6 +276,7 @@ function card(it, type){
   if(type!=='patterns' && (it.patternIds||[]).length){
     (it.patternIds||[]).forEach(pid=>{ const p = db.patterns.find(x=>x.id===pid); if(p) links.appendChild(makeLinkChip('patterns', pid, 'Выкр.: '+p.name)); });
   }
+  if(it.fileMeta && (type==='patterns' || type==='items')){ links.appendChild(makeFileChip(it.fileMeta)); }
   if(links.children.length) mid.appendChild(links);
   root.appendChild(mid);
   const actions = document.createElement('div'); actions.style.display='flex'; actions.style.flexDirection='column'; actions.style.gap='8px';
@@ -260,14 +286,33 @@ function card(it, type){
   root.addEventListener('click', (e)=>{ const el = e.target.closest('.js-link'); if(!el) return; e.stopPropagation(); openView(el.dataset.type, el.dataset.id); });
   return root;
 }
-
-/** -------- Lightbox -------- */
+/** -------- Lightbox (images) -------- */
 const lightbox = document.getElementById('lightbox');
 const lightboxImg = document.getElementById('lightboxImg');
 function openLightbox(src){ if(!src) return; lightboxImg.src = src; lightbox.style.display='flex'; }
 lightbox.addEventListener('click',()=>{ lightbox.style.display='none'; lightboxImg.src=''; });
-
-/** -------- Forms & view modals -------- */
+/** -------- PDF viewer -------- */
+const pdfBack = document.getElementById('pdfBack');
+const pdfFrame = document.getElementById('pdfFrame');
+const pdfTitle = document.getElementById('pdfTitle');
+const pdfClose = document.getElementById('pdfClose');
+const pdfDownload = document.getElementById('pdfDownload');
+let currentPdfUrl = null;
+function openPdfViewer(blob, name='Файл.pdf'){
+  if(currentPdfUrl){ URL.revokeObjectURL(currentPdfUrl); currentPdfUrl=null; }
+  const url = URL.createObjectURL(blob);
+  currentPdfUrl = url;
+  pdfFrame.src = url;
+  pdfTitle.textContent = name;
+  pdfDownload.onclick = ()=>{ const a = document.createElement('a'); a.href=url; a.download=name; a.click(); };
+  pdfBack.style.display='flex';
+}
+pdfClose.addEventListener('click', ()=>{
+  pdfBack.style.display='none';
+  pdfFrame.src = 'about:blank';
+  if(currentPdfUrl){ URL.revokeObjectURL(currentPdfUrl); currentPdfUrl=null; }
+});
+/** -------- View & Forms -------- */
 const modalBack = document.getElementById('modalBack');
 const modalTitle = document.getElementById('modalTitle');
 const form = document.getElementById('form');
@@ -276,18 +321,16 @@ const btnDelete = document.getElementById('btnDelete');
 const btnCancel = document.getElementById('btnCancel');
 const btnSave = document.getElementById('btnSave');
 btnCancel.addEventListener('click', closeModal);
-
-function closeModal(){ modalBack.style.display='none'; form.reset(); formGrid.innerHTML=''; editing=null; btnSave.style.display=''; btnDelete.style.display=''; btnCancel.textContent='Отмена'; }
-
-function viewTitleFor(type){
-  return type==='fabrics' ? 'Ткань' : type==='patterns' ? 'Выкройка' : 'Изделие';
+function closeModal(){
+  modalBack.style.display='none'; form.reset(); formGrid.innerHTML=''; editing=null;
+  btnSave.style.display=''; btnDelete.style.display=''; btnCancel.textContent='Отмена';
+  const extra = document.getElementById('viewActionsRow'); if(extra) extra.remove();
 }
-
+function viewTitleFor(type){ return type==='fabrics' ? 'Ткань' : type==='patterns' ? 'Выкройка' : 'Изделие'; }
 function openView(type, id){
   const coll = db[type];
   const it = coll.find(x=>x.id===id);
   if(!it) return;
-  // read-only details + кнопка "Редактировать"
   modalTitle.textContent = viewTitleFor(type) + ': ' + it.name;
   formGrid.innerHTML='';
   const left = document.createElement('div');
@@ -305,34 +348,22 @@ function openView(type, id){
     <div style="margin-top:8px" class="links"></div>
   `;
   formGrid.appendChild(left); formGrid.appendChild(right);
-  // render cross-links
   const links = right.querySelector('.links');
   (it.fabricIds||[]).forEach(fid=>{ const f = db.fabrics.find(x=>x.id===fid); if(f) links.appendChild(makeLinkChip('fabrics', fid, 'Ткань: '+f.name)); });
   (it.patternIds||[]).forEach(pid=>{ const p = db.patterns.find(x=>x.id===pid); if(p) links.appendChild(makeLinkChip('patterns', pid, 'Выкр.: '+p.name)); });
+  if(it.fileMeta && (type==='patterns' || type==='items')){ links.appendChild(makeFileChip(it.fileMeta)); }
   const ph = right.querySelector('#viewPhoto'); ph?.addEventListener('click',()=> it.photo && openLightbox(it.photo));
-  // настройки кнопок
-  btnDelete.style.display='none';
-  btnSave.style.display='none';
-  btnCancel.textContent='Закрыть';
-  // добавим "Редактировать"
-  const editBtn = document.createElement('button');
-  editBtn.type='button'; editBtn.className='btn'; editBtn.textContent='Редактировать';
-  editBtn.style.marginLeft='auto';
-  const actionsRow = document.createElement('div'); actionsRow.className='actions';
-  actionsRow.appendChild(document.createElement('span'));
-  actionsRow.appendChild(editBtn);
-  form.appendChild(actionsRow);
-  editBtn.addEventListener('click', ()=>{ // перейти в режим редактирования
-    actionsRow.remove();
-    openForm(type, id);
-  });
+  btnDelete.style.display='none'; btnSave.style.display='none'; btnCancel.textContent='Закрыть';
+  const actionsRow = document.createElement('div'); actionsRow.className='actions'; actionsRow.id='viewActionsRow';
+  const editBtn = document.createElement('button'); editBtn.type='button'; editBtn.className='btn'; editBtn.textContent='Редактировать';
+  editBtn.style.marginLeft='auto'; actionsRow.appendChild(editBtn); form.appendChild(actionsRow);
+  editBtn.addEventListener('click', ()=>{ actionsRow.remove(); openForm(type, id); });
   modalBack.style.display='flex';
 }
-
 function openForm(type, id){
   editing = {type,id};
   const coll = db[type];
-  const it = id ? {...coll.find(x=>x.id===id)} : { id: uid(), name:'', tags:[], photo:'', note:'', qty:0, spent:0, patternIds:[], fabricIds:[] };
+  const it = id ? {...coll.find(x=>x.id===id)} : { id: uid(), name:'', tags:[], photo:'', note:'', qty:0, spent:0, patternIds:[], fabricIds:[], fileMeta:null };
   modalTitle.textContent = (id?'Изменить ':'Добавить ') + (type==='fabrics'?'ткань':type==='patterns'?'выкройку':'изделие');
   formGrid.innerHTML = '';
   const htmlLeft = document.createElement('div');
@@ -354,9 +385,19 @@ function openForm(type, id){
     <div class="thumb" id="thumbBox">${it.photo?`<img id="thumbPrev" src="${it.photo}"/>`:`<span id="thumbPrev">Нет фото</span>`}</div>
     <input id="f_photo" type="file" accept="image/*" style="margin-top:8px"/>
     <div class="row" style="gap:8px;margin-top:8px">
-      <button type="button" class="btn ghost" id="btnDelPhoto">Удалить фото</button>
-      <button type="button" class="btn" id="btnPreviewBig">Открыть большое</button>
+      <button type="button" class="btn ghost tiny" id="btnDelPhoto">Удалить фото</button>
+      <button type="button" class="btn tiny" id="btnPreviewBig">Открыть большое</button>
     </div>
+    ${(type==='patterns' || type==='items') ? `
+      <div style="height:10px"></div>
+      <label>Файл (PDF или изображение)</label>
+      <div class="row" style="gap:8px;flex-wrap:wrap;align-items:center">
+        <input id="f_file" type="file" accept="application/pdf,image/*"/>
+        <span id="fileMetaLabel" class="muted">${it.fileMeta? (it.fileMeta.fileName||'Файл добавлен') : 'Файл не выбран'}</span>
+        <button type="button" class="btn tiny" id="btnOpenFile"${it.fileMeta?'':' disabled'}>Открыть</button>
+        <button type="button" class="btn ghost tiny" id="btnDelFile"${it.fileMeta?'':' disabled'}>Удалить файл</button>
+      </div>
+    `:''}
     <div style="height:8px"></div>
     <label>Ссылки</label>
     <div style="font-size:12px;color:var(--ink-dim);margin-bottom:6px">Выберите связанные элементы — по ним можно будет открыть карточку из списка.</div>
@@ -367,52 +408,64 @@ function openForm(type, id){
   `;
   formGrid.appendChild(htmlLeft);
   formGrid.appendChild(htmlRight);
-  // populate selects
   if(type!=='fabrics'){
     const sel = document.getElementById('f_fabrics');
-    db.fabrics.forEach(f=>{
-      const o = document.createElement('option'); o.value=f.id; o.textContent='Ткань: '+f.name;
-      if((it.fabricIds||[]).includes(f.id)) o.selected=true;
-      sel.appendChild(o);
-    });
+    db.fabrics.forEach(f=>{ const o = document.createElement('option'); o.value=f.id; o.textContent='Ткань: '+f.name; if((it.fabricIds||[]).includes(f.id)) o.selected=true; sel.appendChild(o); });
   }
   if(type!=='patterns'){
     const sel = document.getElementById('f_patterns');
-    db.patterns.forEach(p=>{
-      const o = document.createElement('option'); o.value=p.id; o.textContent='Выкр.: '+p.name;
-      if((it.patternIds||[]).includes(p.id)) o.selected=true;
-      sel.appendChild(o);
-    });
+    db.patterns.forEach(p=>{ const o = document.createElement('option'); o.value=p.id; o.textContent='Выкр.: '+p.name; if((it.patternIds||[]).includes(p.id)) o.selected=true; sel.appendChild(o); });
   }
-  // handlers: photo preview + lightbox
   const thumbBox = document.getElementById('thumbBox');
-  const thumbPrev = document.getElementById('thumbPrev');
   document.getElementById('f_photo').addEventListener('change', async (e)=>{
     const file = e.target.files[0]; if(!file) return;
-    const dataUrl = await dataURLFromFile(file);
-    it.photo = dataUrl;
-    thumbBox.innerHTML = `<img id="thumbPrev" src="${dataUrl}">`;
+    const dataUrl = await new Promise((resolve,reject)=>{ const r=new FileReader(); r.onload=()=>resolve(r.result); r.onerror=reject; r.readAsDataURL(file); });
+    it.photo = dataUrl; thumbBox.innerHTML = `<img id="thumbPrev" src="${dataUrl}">`;
   });
-  document.getElementById('btnDelPhoto').addEventListener('click',()=>{
-    it.photo=''; thumbBox.innerHTML = '<span id="thumbPrev">Нет фото</span>';
-  });
-  document.getElementById('btnPreviewBig').addEventListener('click',()=>{
-    if(it.photo) openLightbox(it.photo);
-  });
-  // а также клик по самой миниатюре
+  document.getElementById('btnDelPhoto').addEventListener('click',()=>{ it.photo=''; thumbBox.innerHTML = '<span id="thumbPrev">Нет фото</span>'; });
+  document.getElementById('btnPreviewBig').addEventListener('click',()=>{ if(it.photo) openLightbox(it.photo); });
   thumbBox.addEventListener('click',()=>{ const img = thumbBox.querySelector('img'); if(img) openLightbox(img.src); });
-
-  // buttons
+  if(type==='patterns' || type==='items'){
+    const fInput = document.getElementById('f_file');
+    const metaLabel = document.getElementById('fileMetaLabel');
+    const btnOpenFile = document.getElementById('btnOpenFile');
+    const btnDelFile = document.getElementById('btnDelFile');
+    btnOpenFile.onclick = async ()=>{
+      if(!it.fileMeta) return;
+      const rec = await idbGet(it.fileMeta.fileKey);
+      if(!rec){ alert('Файл не найден в памяти устройства'); return; }
+      if(rec.type.startsWith('image/')){
+        const url = URL.createObjectURL(rec.blob); openLightbox(url); setTimeout(()=>URL.revokeObjectURL(url), 30000);
+      }else if(rec.type==='application/pdf'){
+        openPdfViewer(rec.blob, rec.name||'Файл.pdf');
+      }else{
+        const a = document.createElement('a'); const url = URL.createObjectURL(rec.blob); a.href=url; a.download=rec.name||'file'; a.click(); setTimeout(()=>URL.revokeObjectURL(url), 30000);
+      }
+    };
+    btnDelFile.onclick = async ()=>{
+      if(it.fileMeta){ await idbDel(it.fileMeta.fileKey); }
+      it.fileMeta=null; metaLabel.textContent='Файл не выбран'; btnOpenFile.disabled=true; btnDelFile.disabled=true;
+    };
+    fInput.addEventListener('change', async (e)=>{
+      const file = e.target.files[0];
+      if(!file) return;
+      const key = 'file_'+uid();
+      const rec = { key, name:file.name, type:file.type||'application/octet-stream', blob:file };
+      await idbPut(rec);
+      it.fileMeta = { fileKey:key, fileName:file.name, fileType:rec.type };
+      metaLabel.textContent = file.name + ' (' + (rec.type.includes('pdf')?'PDF':'изображение') + ')';
+      btnOpenFile.disabled=false; btnDelFile.disabled=false;
+    });
+  }
   btnDelete.style.display = id ? '' : 'none';
   btnSave.style.display = '';
   btnCancel.textContent='Отмена';
   modalBack.style.display='flex';
-
-  btnDelete.onclick = ()=>{
+  btnDelete.onclick = async ()=>{
     if(confirm('Удалить запись?')){
+      if(it.fileMeta){ await idbDel(it.fileMeta.fileKey); }
       const idx = coll.findIndex(x=>x.id===it.id);
       if(idx>=0) coll.splice(idx,1);
-      // чистим ссылки в других сущностях
       ['fabrics','patterns','items'].forEach(k=>{
         db[k].forEach(x=>{
           x.fabricIds = (x.fabricIds||[]).filter(v=>v!==it.id);
@@ -422,7 +475,7 @@ function openForm(type, id){
       save(); closeModal(); render();
     }
   };
-  form.onsubmit = (ev)=>{
+  form.onsubmit = async (ev)=>{
     ev.preventDefault();
     it.name = document.getElementById('f_name').value.trim() || '(без названия)';
     const tags = document.getElementById('f_tags').value.trim();
@@ -434,11 +487,23 @@ function openForm(type, id){
     if(type!=='fabrics'){ it.fabricIds = Array.from(document.getElementById('f_fabrics').selectedOptions||[]).map(o=>o.value); }
     if(type!=='patterns'){ it.patternIds = Array.from(document.getElementById('f_patterns').selectedOptions||[]).map(o=>o.value); }
     const idx = coll.findIndex(x=>x.id===it.id);
-    if(idx>=0) coll[idx] = it; else coll.push(it);
+    if(idx>=0) coll[idx] = it; else { it.id = it.id || uid(); coll.push(it); }
     save(); closeModal(); render();
   };
 }
-
+/** ------ open stored file from chips ------ */
+async function openStoredFile(meta){
+  if(!meta) return;
+  const rec = await idbGet(meta.fileKey);
+  if(!rec){ alert('Файл не найден (возможно, был удалён очисткой памяти браузера).'); return; }
+  if(rec.type.startsWith('image/')){
+    const url = URL.createObjectURL(rec.blob); openLightbox(url); setTimeout(()=>URL.revokeObjectURL(url), 30000);
+  }else if(rec.type==='application/pdf'){
+    openPdfViewer(rec.blob, rec.name||'Файл.pdf');
+  }else{
+    const a=document.createElement('a'); const url=URL.createObjectURL(rec.blob); a.href=url; a.download=rec.name||'file'; a.click(); setTimeout(()=>URL.revokeObjectURL(url), 30000);
+  }
+}
 function writeOff(fabricId){
   const f = db.fabrics.find(x=>x.id===fabricId);
   if(!f) return;
@@ -449,7 +514,6 @@ function writeOff(fabricId){
   f.qty = Math.max(0, Number(f.qty||0) - n);
   save(); render();
 }
-
 /** init */
 render();
 </script>
